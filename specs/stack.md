@@ -17,10 +17,8 @@
 - Livewire manages state and UI flow
 
 ## Technical Rules
-- Controllers are only for routing and orchestration
-- Business logic must live in Services or Actions
-- UI must be implemented using Livewire components
-- Alpine.js is limited to local UI interactions (toggle, modal, dropdown)
+- UI and "Backending" must be implemented using Livewire components, now we have a single file component by default
+- We can use Alpine.js as its full structure, cause Livewire already use it
 
 ## Forbidden Technologies
 - React
