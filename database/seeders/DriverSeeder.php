@@ -2,18 +2,16 @@
 
 namespace Database\Seeders;
 
+use App\Models\Driver;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class DriverSeeder extends Seeder
 {
     use WithoutModelEvents;
 
     public function run(): void
     {
-        $this->call([
-            UserSeeder::class,
-            DriverSeeder::class,
-        ]);
+        Driver::factory(15)->create();
     }
 }

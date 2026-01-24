@@ -15,4 +15,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::livewire('/', 'pages::auth.dashboard')->name('dashboard');
+
+    Route::livewire('/motoristas', 'pages::auth.drivers.index')->name('drivers.index');
+    Route::livewire('/motoristas/criar', 'pages::auth.drivers.create')->name('drivers.create');
+    Route::livewire('/motoristas/{id}/editar', 'pages::auth.drivers.edit')->name('drivers.edit');
 });
