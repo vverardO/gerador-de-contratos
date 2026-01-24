@@ -22,6 +22,9 @@
     </script>
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="fixed top-2 right-2 sm:top-4 sm:right-4 z-50">
+        @include('components.theme-switcher')
+    </div>
     {{ $slot }}
 
     @livewireScripts
