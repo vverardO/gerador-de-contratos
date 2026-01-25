@@ -56,15 +56,23 @@ new class extends Component
     public function update()
     {
         $this->validate([
-            'name' => 'required|string|max:255',
-            'document' => 'required|string|max:255',
-            'postalCode' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'number' => 'nullable|string|max:255',
-            'complement' => 'nullable|string|max:255',
-            'neighborhood' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255'],
+            'document' => ['required', 'string', 'max:255'],
+            'postalCode' => ['required', 'string', 'max:255'],
+            'street' => ['required', 'string', 'max:255'],
+            'number' => ['nullable', 'string', 'max:255'],
+            'complement' => ['nullable', 'string', 'max:255'],
+            'neighborhood' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'string', 'max:255'],
+        ], [
+            'name.required' => 'O nome é obrigatório.',
+            'document.required' => 'O documento é obrigatório.',
+            'postalCode.required' => 'O CEP é obrigatório.',
+            'street.required' => 'A rua é obrigatória.',
+            'neighborhood.required' => 'O bairro é obrigatório.',
+            'city.required' => 'A cidade é obrigatória.',
+            'state.required' => 'O estado é obrigatório.',
         ]);
 
         $this->driver->update([
