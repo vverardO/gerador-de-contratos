@@ -8,13 +8,21 @@ use Livewire\Component;
 new class extends Component
 {
     public string $name = '';
+
     public string $document = '';
+
     public string $postalCode = '';
+
     public string $street = '';
+
     public string $number = '';
+
     public string $complement = '';
+
     public string $neighborhood = '';
+
     public string $city = '';
+
     public string $state = '';
 
     public function logout()
