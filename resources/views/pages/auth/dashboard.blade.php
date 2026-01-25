@@ -41,7 +41,7 @@ new class extends Component
             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">Painel</h1>
             <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">Bem-vindo ao seu painel, {{ auth()->user()->name }}!</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <a href="{{ route('drivers.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
                 <div class="flex items-center justify-between">
                     <div>
@@ -51,11 +51,11 @@ new class extends Component
                     <i class="fas fa-users text-blue-600 dark:text-blue-400 text-3xl"></i>
                 </div>
             </a>
-            <a href="{{ route('vehicleOwners.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+            <a href="{{ route('vehicles.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Proprietários</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar proprietários</p>
+                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Veículos</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar veículos</p>
                     </div>
                     <i class="fas fa-car text-blue-600 dark:text-blue-400 text-3xl"></i>
                 </div>
@@ -67,6 +67,15 @@ new class extends Component
                         <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar contratos</p>
                     </div>
                     <i class="fas fa-file-contract text-blue-600 dark:text-blue-400 text-3xl"></i>
+                </div>
+            </a>
+            <a href="{{ route('vehicleOwners.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Proprietários</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar proprietários</p>
+                    </div>
+                    <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 text-3xl"></i>
                 </div>
             </a>
         </div>

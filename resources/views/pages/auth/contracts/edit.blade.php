@@ -3,6 +3,7 @@
 use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Models\Driver;
+use App\Models\Vehicle;
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -20,6 +21,10 @@ new class extends Component
     public string $vehicleOwnerSearch = '';
 
     public ?int $selectedVehicleOwnerId = null;
+
+    public string $vehicleSearch = '';
+
+    public ?int $selectedVehicleId = null;
 
     public string $driverName = '';
 
@@ -129,6 +134,30 @@ new class extends Component
 
         return VehicleOwner::where('name', 'like', '%' . $this->vehicleOwnerSearch . '%')
             ->orWhere('document', 'like', '%' . $this->vehicleOwnerSearch . '%')
+            ->limit(10)
+            ->get();
+    }
+
+    public function selectVehicle($vehicleId)
+    {
+        $vehicle = Vehicle::findOrFail($vehicleId);
+        $this->selectedVehicleId = $vehicleId;
+        $this->vehicle = $vehicle->name;
+        $this->manufacturingModel = $vehicle->manufacturing_model;
+        $this->licensePlate = $vehicle->license_plate;
+        $this->chassis = $vehicle->chassis;
+        $this->renavam = $vehicle->renavam;
+        $this->vehicleSearch = $vehicle->name;
+    }
+
+    public function getVehiclesProperty()
+    {
+        if (strlen($this->vehicleSearch) < 2) {
+            return collect();
+        }
+
+        return Vehicle::where('name', 'like', '%' . $this->vehicleSearch . '%')
+            ->orWhere('license_plate', 'like', '%' . $this->vehicleSearch . '%')
             ->limit(10)
             ->get();
     }
@@ -371,6 +400,37 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Veículo</h2>
+                    <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
+                        <label for="vehicleSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Veículo</label>
+                        <div class="relative">
+                            <input
+                                type="text"
+                                id="vehicleSearch"
+                                wire:model.live="vehicleSearch"
+                                x-on:focus="open = true"
+                                x-on:input="open = true"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="Digite o nome ou placa do veículo"
+                            >
+                            @if($this->vehicles->count() > 0 && $vehicleSearch && !$selectedVehicleId)
+                                <div x-show="open" 
+                                     x-cloak
+                                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    @foreach($this->vehicles as $vehicle)
+                                        <button
+                                            type="button"
+                                            wire:click="selectVehicle({{ $vehicle->id }})"
+                                            x-on:click="open = false"
+                                            class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
+                                        >
+                                            <div class="font-medium">{{ $vehicle->name }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicle->license_plate }}</div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="vehicle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Veículo</label>

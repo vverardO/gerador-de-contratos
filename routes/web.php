@@ -25,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/proprietarios/criar', 'pages::auth.vehicle-owners.create')->name('vehicleOwners.create');
     Route::livewire('/proprietarios/{id}/editar', 'pages::auth.vehicle-owners.edit')->name('vehicleOwners.edit');
 
+    Route::livewire('/veiculos', 'pages::auth.vehicles.index')->name('vehicles.index');
+    Route::livewire('/veiculos/criar', 'pages::auth.vehicles.create')->name('vehicles.create');
+    Route::livewire('/veiculos/{id}/editar', 'pages::auth.vehicles.edit')->name('vehicles.edit');
+
     Route::livewire('/contratos', 'pages::auth.contracts.index')->name('contracts.index');
     Route::livewire('/contratos/criar', 'pages::auth.contracts.create')->name('contracts.create');
     Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');
