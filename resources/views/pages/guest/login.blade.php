@@ -14,6 +14,10 @@ new #[Layout('layouts.guest')] class extends Component
         $this->validate([
             'email' => 'required|email',
             'password' => 'required',
+        ], [
+            'email.required' => 'O e-mail é obrigatório.',
+            'email.email' => 'O e-mail deve ser um endereço de e-mail válido.',
+            'password.required' => 'A senha é obrigatória.',
         ]);
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
