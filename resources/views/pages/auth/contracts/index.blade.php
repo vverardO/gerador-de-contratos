@@ -95,6 +95,13 @@ new class extends Component
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a
+                                            href="{{ route('contracts.show', $contract->id) }}"
+                                            target="_blank"
+                                            class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                        >
+                                            Visualizar
+                                        </a>
+                                        <a
                                             href="{{ route('contracts.edit', $contract->id) }}"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
                                             wire:navigate
@@ -123,6 +130,13 @@ new class extends Component
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Valor: R$ {{ $contract->value }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $contract->created_at->format('M d, Y') }}</div>
                             <div class="flex gap-3">
+                                <a
+                                    href="{{ route('contracts.show', $contract->id) }}"
+                                    target="_blank"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                                >
+                                    Visualizar
+                                </a>
                                 <a
                                     href="{{ route('contracts.edit', $contract->id) }}"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"

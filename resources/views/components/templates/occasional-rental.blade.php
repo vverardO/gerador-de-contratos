@@ -87,7 +87,7 @@
     </style>
 </head>
 <body>
-    <h1 class="header">CONTRATO DE LOCACAO DE VEICULO POR PRAZO DETERMINADO</h1>
+    <h1 class="header">CONTRATO DE LOCACAO DE VEICULO POR PRAZO DETERMINADO - EVENTUAL</h1>
 
     <div class="section">
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCACOES DE VEICULOS CNPJ: 54.379.584/0001-87, AV Liberdade 207B, bairro Passo da Areia, CEP 97010-270.</p>

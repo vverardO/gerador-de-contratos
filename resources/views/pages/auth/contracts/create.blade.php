@@ -7,7 +7,7 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public string $type = 'occasional_rental';
+    public string $type = ContractType::OccasionalRental->value;
     public string $driverName = '';
     public string $driverDocument = '';
     public string $driverStreet = '';

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContractController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -23,25 +24,5 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/contratos', 'pages::auth.contracts.index')->name('contracts.index');
     Route::livewire('/contratos/criar', 'pages::auth.contracts.create')->name('contracts.create');
     Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');
-
-    Route::get('/contrato-app', function () {
-        return view('components.templates.app-drive', [
-            'motorista_nome' => 'Joao Silva',
-            'motorista_documento' => '123.456.789-00',
-            'motorista_rua' => 'Rua das Flores',
-            'motorista_numero' => '100',
-            'motorista_bairro' => 'Centro',
-            'motorista_cep' => '97000-000',
-            'veiculo' => 'Chevrolet Onix',
-            'fabricacao_modelo' => '2023/2024',
-            'placa' => 'ABC1D23',
-            'chassi' => '9BGKS48B0KG123456',
-            'renavam' => '12345678901',
-            'proprietario_nome' => 'IZI CAR',
-            'proprietario_documento' => '54.379.584/0001-87',
-            'valor' => '89,90',
-            'valor_extenso' => 'oitenta e nove reais e noventa centavos',
-            'data_hoje' => '24 de janeiro de 2026',
-        ]);
-    });
+    Route::get('/contratos/{id}/visualizar', [ContractController::class, 'show'])->name('contracts.show');
 });
