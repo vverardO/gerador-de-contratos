@@ -22,6 +22,8 @@ new class extends Component
     {
         $contract = Contract::findOrFail($id);
         $contract->delete();
+
+        $this->dispatch('toast', message: 'Contrato deletado com sucesso', type: 'success');
     }
 
     public function getContractsProperty()

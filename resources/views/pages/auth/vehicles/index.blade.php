@@ -22,6 +22,8 @@ new class extends Component
     {
         $vehicle = Vehicle::findOrFail($id);
         $vehicle->delete();
+
+        $this->dispatch('toast', message: 'Veículo deletado com sucesso', type: 'success');
     }
 
     public function getVehiclesProperty()

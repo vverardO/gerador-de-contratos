@@ -22,6 +22,8 @@ new class extends Component
     {
         $vehicleOwner = VehicleOwner::findOrFail($id);
         $vehicleOwner->delete();
+
+        $this->dispatch('toast', message: 'Proprietário deletado com sucesso', type: 'success');
     }
 
     public function getVehicleOwnersProperty()

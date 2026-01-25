@@ -102,6 +102,11 @@ new class extends Component
             ]);
         }
 
+        session()->flash('toast', [
+            'message' => 'Motorista editado com sucesso',
+            'type' => 'success'
+        ]);
+
         return $this->redirect(route('drivers.index'), navigate: true);
     }
 

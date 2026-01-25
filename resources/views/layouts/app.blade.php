@@ -24,7 +24,7 @@
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900">
     {{ $slot }}
-
+    @include('components.toast')
     @livewireScripts
 </body>
 </html>

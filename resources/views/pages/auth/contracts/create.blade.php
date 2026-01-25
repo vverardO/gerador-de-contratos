@@ -198,6 +198,11 @@ new class extends Component
             'today_date' => $this->todayDate,
         ]);
 
+        session()->flash('toast', [
+            'message' => 'Contrato criado com sucesso',
+            'type' => 'success'
+        ]);
+
         return $this->redirect(route('contracts.index'), navigate: true);
     }
 }

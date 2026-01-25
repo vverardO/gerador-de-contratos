@@ -71,6 +71,11 @@ new class extends Component
             'state' => $this->state,
         ]);
 
+        session()->flash('toast', [
+            'message' => 'Motorista criado com sucesso',
+            'type' => 'success'
+        ]);
+
         return $this->redirect(route('drivers.index'), navigate: true);
     }
 

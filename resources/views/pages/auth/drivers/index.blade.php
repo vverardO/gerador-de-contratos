@@ -22,6 +22,8 @@ new class extends Component
     {
         $driver = Driver::findOrFail($id);
         $driver->delete();
+
+        $this->dispatch('toast', message: 'Motorista deletado com sucesso', type: 'success');
     }
 
     public function getDriversProperty()

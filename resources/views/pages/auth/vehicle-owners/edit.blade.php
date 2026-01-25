@@ -43,6 +43,11 @@ new class extends Component
             'document' => $this->document,
         ]);
 
+        session()->flash('toast', [
+            'message' => 'Proprietário editado com sucesso',
+            'type' => 'success'
+        ]);
+
         return $this->redirect(route('vehicleOwners.index'), navigate: true);
     }
 }

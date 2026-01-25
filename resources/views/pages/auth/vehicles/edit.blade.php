@@ -61,6 +61,11 @@ new class extends Component
             'renavam' => $this->renavam,
         ]);
 
+        session()->flash('toast', [
+            'message' => 'Veículo editado com sucesso',
+            'type' => 'success'
+        ]);
+
         return $this->redirect(route('vehicles.index'), navigate: true);
     }
 }
