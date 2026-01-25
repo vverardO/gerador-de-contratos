@@ -23,4 +23,9 @@ class Driver extends Model
             get: fn () => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $this->document),
         );
     }
+
+    public function address()
+    {
+        return $this->hasOne(DriverAddress::class);
+    }
 }
