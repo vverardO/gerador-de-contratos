@@ -3,6 +3,7 @@
 use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Models\Driver;
+use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -15,6 +16,10 @@ new class extends Component
     public string $driverSearch = '';
 
     public ?int $selectedDriverId = null;
+
+    public string $vehicleOwnerSearch = '';
+
+    public ?int $selectedVehicleOwnerId = null;
 
     public string $driverName = '';
 
@@ -103,6 +108,27 @@ new class extends Component
 
         return Driver::where('name', 'like', '%' . $this->driverSearch . '%')
             ->orWhere('document', 'like', '%' . $this->driverSearch . '%')
+            ->limit(10)
+            ->get();
+    }
+
+    public function selectVehicleOwner($vehicleOwnerId)
+    {
+        $vehicleOwner = VehicleOwner::findOrFail($vehicleOwnerId);
+        $this->selectedVehicleOwnerId = $vehicleOwnerId;
+        $this->ownerName = $vehicleOwner->name;
+        $this->ownerDocument = $vehicleOwner->document;
+        $this->vehicleOwnerSearch = $vehicleOwner->name;
+    }
+
+    public function getVehicleOwnersProperty()
+    {
+        if (strlen($this->vehicleOwnerSearch) < 2) {
+            return collect();
+        }
+
+        return VehicleOwner::where('name', 'like', '%' . $this->vehicleOwnerSearch . '%')
+            ->orWhere('document', 'like', '%' . $this->vehicleOwnerSearch . '%')
             ->limit(10)
             ->get();
     }
@@ -416,6 +442,37 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Proprietário</h2>
+                    <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
+                        <label for="vehicleOwnerSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Proprietário</label>
+                        <div class="relative">
+                            <input
+                                type="text"
+                                id="vehicleOwnerSearch"
+                                wire:model.live="vehicleOwnerSearch"
+                                x-on:focus="open = true"
+                                x-on:input="open = true"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="Digite o nome ou documento do proprietário"
+                            >
+                            @if($this->vehicleOwners->count() > 0 && $vehicleOwnerSearch && !$selectedVehicleOwnerId)
+                                <div x-show="open" 
+                                     x-cloak
+                                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    @foreach($this->vehicleOwners as $vehicleOwner)
+                                        <button
+                                            type="button"
+                                            wire:click="selectVehicleOwner({{ $vehicleOwner->id }})"
+                                            x-on:click="open = false"
+                                            class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
+                                        >
+                                            <div class="font-medium">{{ $vehicleOwner->name }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicleOwner->document }}</div>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="ownerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Proprietário</label>
