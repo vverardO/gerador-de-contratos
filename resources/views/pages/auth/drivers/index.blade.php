@@ -71,6 +71,7 @@ new class extends Component
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
+                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nome</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Documento</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Criado</th>
@@ -81,6 +82,9 @@ new class extends Component
                             @foreach($this->drivers as $driver)
                                 <tr>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        {{ $driver->id }}
+                                    </td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $driver->name }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -94,15 +98,17 @@ new class extends Component
                                             href="{{ route('drivers.edit', $driver->id) }}"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
                                             wire:navigate
+                                            title="Editar"
                                         >
-                                            Editar
+                                            <i class="fas fa-pencil"></i>
                                         </a>
                                         <button
                                             wire:click="delete({{ $driver->id }})"
                                             wire:confirm="Tem certeza que deseja excluir este motorista?"
                                             class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                                            title="Excluir"
                                         >
-                                            Excluir
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -122,15 +128,17 @@ new class extends Component
                                     href="{{ route('drivers.edit', $driver->id) }}"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                     wire:navigate
+                                    title="Editar"
                                 >
-                                    Editar
+                                    <i class="fas fa-pencil"></i>
                                 </a>
                                 <button
                                     wire:click="delete({{ $driver->id }})"
                                     wire:confirm="Tem certeza que deseja excluir este cliente?"
                                     class="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                                    title="Excluir"
                                 >
-                                    Excluir
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>

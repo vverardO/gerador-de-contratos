@@ -71,6 +71,7 @@ new class extends Component
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
+                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motorista</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Veículo</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
@@ -82,6 +83,9 @@ new class extends Component
                             @foreach($this->contracts as $contract)
                                 <tr>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        {{ $contract->id }}
+                                    </td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $contract->driver_name }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -98,22 +102,25 @@ new class extends Component
                                             href="{{ route('contracts.show', $contract->id) }}"
                                             target="_blank"
                                             class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                            title="Visualizar"
                                         >
-                                            Visualizar
+                                            <i class="fas fa-eye"></i>
                                         </a>
                                         <a
                                             href="{{ route('contracts.edit', $contract->id) }}"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
                                             wire:navigate
+                                            title="Editar"
                                         >
-                                            Editar
+                                            <i class="fas fa-pencil"></i>
                                         </a>
                                         <button
                                             wire:click="delete({{ $contract->id }})"
                                             wire:confirm="Tem certeza que deseja excluir este contrato?"
                                             class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                                            title="Excluir"
                                         >
-                                            Excluir
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -134,22 +141,25 @@ new class extends Component
                                     href="{{ route('contracts.show', $contract->id) }}"
                                     target="_blank"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                                    title="Visualizar"
                                 >
-                                    Visualizar
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 <a
                                     href="{{ route('contracts.edit', $contract->id) }}"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                     wire:navigate
+                                    title="Editar"
                                 >
-                                    Editar
+                                    <i class="fas fa-pencil"></i>
                                 </a>
                                 <button
                                     wire:click="delete({{ $contract->id }})"
                                     wire:confirm="Tem certeza que deseja excluir este contrato?"
                                     class="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                                    title="Excluir"
                                 >
-                                    Excluir
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>

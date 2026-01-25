@@ -24,5 +24,6 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/contratos', 'pages::auth.contracts.index')->name('contracts.index');
     Route::livewire('/contratos/criar', 'pages::auth.contracts.create')->name('contracts.create');
     Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');
+
     Route::get('/contratos/{id}/visualizar', [ContractController::class, 'show'])->name('contracts.show');
 });
