@@ -23,8 +23,8 @@
             background: #fff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             min-height: 11in;
-            padding-top: 20px;
-            padding-bottom: 20px;
+            padding-top: 40px;
+            padding-bottom: 40px;
             padding-left: 80px;
             padding-right: 80px;
         }
