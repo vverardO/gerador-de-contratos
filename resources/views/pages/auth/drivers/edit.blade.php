@@ -2,6 +2,7 @@
 
 use App\Models\Driver;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 new class extends Component
@@ -95,6 +96,32 @@ new class extends Component
 
         return $this->redirect(route('drivers.index'), navigate: true);
     }
+
+    public function updatedPostalCode()
+    {
+        if (strlen($this->postalCode) !== 8) {
+            return;
+        }
+
+        $address = Http::get(
+            "https://viacep.com.br/ws/{$this->postalCode}/json/"
+        )->json();
+
+        if (isset($address['erro']) || ! $address) {
+            $this->dispatch(
+                'alert',
+                type: 'error',
+                message: 'CEP não encontrado, digite o endereço manualmente!'
+            );
+
+            return;
+        }
+
+        $this->street = $address['logradouro'];
+        $this->neighborhood = $address['bairro'];
+        $this->city = $address['localidade'];
+        $this->state = $address['uf'];
+    }
 }
 ?>
 
@@ -173,7 +200,7 @@ new class extends Component
                                 <input
                                     type="text"
                                     id="postalCode"
-                                    wire:model="postalCode"
+                                    wire:model.live="postalCode"
                                     class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                     placeholder="00000-000"
                                 >
