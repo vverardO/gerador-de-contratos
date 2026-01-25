@@ -20,6 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/motoristas/criar', 'pages::auth.drivers.create')->name('drivers.create');
     Route::livewire('/motoristas/{id}/editar', 'pages::auth.drivers.edit')->name('drivers.edit');
 
+    Route::livewire('/contratos', 'pages::auth.contracts.index')->name('contracts.index');
+    Route::livewire('/contratos/criar', 'pages::auth.contracts.create')->name('contracts.create');
+    Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');
+
     Route::get('/contrato-app', function () {
         return view('components.templates.app-drive', [
             'motorista_nome' => 'Joao Silva',
