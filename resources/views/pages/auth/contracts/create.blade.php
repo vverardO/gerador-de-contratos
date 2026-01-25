@@ -1,11 +1,13 @@
 <?php
 
+use App\Enums\ContractType;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 new class extends Component
 {
+    public string $type = 'occasional_rental';
     public string $driverName = '';
     public string $driverDocument = '';
     public string $driverStreet = '';
@@ -35,6 +37,7 @@ new class extends Component
     public function save()
     {
         $this->validate([
+            'type' => 'required|string|in:occasional_rental,app_rental',
             'driverName' => 'required|string|max:255',
             'driverDocument' => 'required|string|max:255',
             'driverStreet' => 'required|string|max:255',
@@ -54,6 +57,7 @@ new class extends Component
         ]);
 
         Contract::create([
+            'type' => $this->type,
             'driver_name' => $this->driverName,
             'driver_document' => $this->driverDocument,
             'driver_street' => $this->driverStreet,
@@ -109,6 +113,21 @@ new class extends Component
             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">Criar Contrato</h1>
 
             <form wire:submit="save">
+                <div class="mb-4">
+                    <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                    <select
+                        id="type"
+                        wire:model="type"
+                        class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    >
+                        <option value="occasional_rental">Locação Ocasional</option>
+                        <option value="app_rental">Locação por App</option>
+                    </select>
+                    @error('type')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="mb-4">
                     <label for="driverName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Motorista</label>
                     <input

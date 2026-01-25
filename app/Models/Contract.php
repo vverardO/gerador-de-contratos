@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContractType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,7 @@ class Contract extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'type',
         'driver_name',
         'driver_document',
         'driver_street',
@@ -28,5 +30,9 @@ class Contract extends Model
         'value',
         'value_in_words',
         'today_date',
+    ];
+
+    protected $casts = [
+        'type' => ContractType::class,
     ];
 }
