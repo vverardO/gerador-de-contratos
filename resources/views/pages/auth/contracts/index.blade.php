@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\ContractStatus;
 use App\Models\Contract;
+use App\Services\ContractService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,6 +26,26 @@ new class extends Component
         $contract->delete();
 
         $this->dispatch('toast', message: 'Contrato deletado com sucesso', type: 'success');
+    }
+
+    public function generatePdf($id)
+    {
+        try {
+            $contract = Contract::findOrFail($id);
+            $contractService = app(ContractService::class);
+            $contractService->generatePdf($contract);
+
+            $contract->status = ContractStatus::SENT;
+            $contract->save();
+
+            $this->dispatch(
+                'toast',
+                message: 'PDF gerado e enviado com sucesso!',
+                type: 'success'
+            );
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: $e->getMessage(), type: 'error');
+        }
     }
 
     public function getContractsProperty()
@@ -77,6 +99,7 @@ new class extends Component
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motorista</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Veículo</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
+                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Criado</th>
                                 <th class="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
                             </tr>
@@ -96,6 +119,24 @@ new class extends Component
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         R$ {{ $contract->value }}
                                     </td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
+                                        @php
+                                            $statusColors = [
+                                                'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                                                'assigned' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                                'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                                            ];
+                                            $statusLabels = [
+                                                'draft' => 'Rascunho',
+                                                'assigned' => 'Assinado',
+                                                'sent' => 'Enviado',
+                                            ];
+                                            $status = $contract->status?->value ?? 'draft';
+                                        @endphp
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusColors[$status] ?? $statusColors['draft'] }}">
+                                            {{ $statusLabels[$status] ?? 'Rascunho' }}
+                                        </span>
+                                    </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $contract->created_at->format('M d, Y') }}
                                     </td>
@@ -108,6 +149,15 @@ new class extends Component
                                         >
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        @if($contract->status->value == 'draft')
+                                        <button
+                                            wire:click="generatePdf({{ $contract->id }})"
+                                            class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
+                                            title="Gerar PDF"
+                                        >
+                                            <i class="fas fa-file-pdf"></i>
+                                        </button>
+                                        @endif
                                         <a
                                             href="{{ route('contracts.edit', $contract->id) }}"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
@@ -137,6 +187,25 @@ new class extends Component
                             <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $contract->driver_name }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Veículo: {{ $contract->vehicle }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Valor: R$ {{ $contract->value }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                Status: 
+                                @php
+                                    $statusColors = [
+                                        'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                                        'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                                        'assigned' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                    ];
+                                    $statusLabels = [
+                                        'draft' => 'Rascunho',
+                                        'assigned' => 'Assinado',
+                                        'sent' => 'Enviado',
+                                    ];
+                                    $status = $contract->status?->value ?? 'draft';
+                                @endphp
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusColors[$status] ?? $statusColors['draft'] }}">
+                                    {{ $statusLabels[$status] ?? 'Rascunho' }}
+                                </span>
+                            </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $contract->created_at->format('M d, Y') }}</div>
                             <div class="flex gap-3">
                                 <a
@@ -147,6 +216,15 @@ new class extends Component
                                 >
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                @if($contract->status->value == 'draft')
+                                    <button
+                                        wire:click="generatePdf({{ $contract->id }})"
+                                        class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
+                                        title="Gerar PDF"
+                                    >
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                @endif
                                 <a
                                     href="{{ route('contracts.edit', $contract->id) }}"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"

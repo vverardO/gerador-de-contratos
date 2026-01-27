@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class Contract extends Model
 
     protected $fillable = [
         'type',
+        'status',
         'driver_name',
         'driver_document',
         'driver_street',
@@ -34,5 +36,6 @@ class Contract extends Model
 
     protected $casts = [
         'type' => ContractType::class,
+        'status' => ContractStatus::class,
     ];
 }

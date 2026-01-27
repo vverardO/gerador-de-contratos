@@ -4,6 +4,14 @@ namespace App\Enums;
 
 enum ContractType: string
 {
-    case OccasionalRental = 'occasional_rental';
-    case AppRental = 'app_rental';
+    case OCCASIONAL_RENTAL = 'occasional_rental';
+    case APP_RENTAL = 'app_rental';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::OCCASIONAL_RENTAL => 'Locação Ocasional',
+            self::APP_RENTAL => 'Locação por App',
+        };
+    }
 }

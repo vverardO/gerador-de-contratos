@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -89,7 +90,8 @@ class ContractFactory extends Factory
         $currentYear = date('Y');
 
         return [
-            'type' => fake()->randomElement([ContractType::OccasionalRental, ContractType::AppRental]),
+            'type' => fake()->randomElement([ContractType::OCCASIONAL_RENTAL, ContractType::APP_RENTAL]),
+            'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::SENT, ContractStatus::ASSIGNED]),
             'driver_name' => fake()->name(),
             'driver_document' => fake()->numerify('###.###.###-##'),
             'driver_street' => fake()->randomElement($streets),

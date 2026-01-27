@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Models\Driver;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public string $type = ContractType::OccasionalRental->value;
+    public string $type = ContractType::OCCASIONAL_RENTAL->value;
 
     public string $driverSearch = '';
 
@@ -196,6 +197,7 @@ new class extends Component
             'value' => $this->value,
             'value_in_words' => $this->valueInWords,
             'today_date' => $this->todayDate,
+            'status' => ContractStatus::DRAFT->value,
         ]);
 
         session()->flash('toast', [
