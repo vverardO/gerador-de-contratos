@@ -91,7 +91,7 @@ class ContractFactory extends Factory
 
         return [
             'type' => fake()->randomElement([ContractType::OCCASIONAL_RENTAL, ContractType::APP_RENTAL]),
-            'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::SENT, ContractStatus::ASSIGNED]),
+            'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::SENT, ContractStatus::SIGNED]),
             'driver_name' => fake()->name(),
             'driver_document' => fake()->numerify('###.###.###-##'),
             'driver_street' => fake()->randomElement($streets),

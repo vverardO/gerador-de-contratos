@@ -53,6 +53,16 @@ new class extends Component
         return Contract::latest()
             ->paginate(7);
     }
+
+    public function markAsSigned($id)
+    {
+        $contract = Contract::findOrFail($id);
+        $contract->status = ContractStatus::SIGNED;
+        $contract->save();
+
+        $this->dispatch(
+            'toast', message: 'Contrato assinado com sucesso', type: 'success');
+    }
 }
 ?>
 
@@ -123,12 +133,12 @@ new class extends Component
                                         @php
                                             $statusColors = [
                                                 'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                                'assigned' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                                'signed' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                                                 'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                                             ];
                                             $statusLabels = [
                                                 'draft' => 'Rascunho',
-                                                'assigned' => 'Assinado',
+                                                'signed' => 'Assinado',
                                                 'sent' => 'Enviado',
                                             ];
                                             $status = $contract->status?->value ?? 'draft';
@@ -156,6 +166,16 @@ new class extends Component
                                             title="Gerar PDF"
                                         >
                                             <i class="fas fa-file-pdf"></i>
+                                        </button>
+                                        @endif
+                                        @if($contract->status->value == 'sent')
+                                        <button
+                                            wire:click="markAsSigned({{ $contract->id }})"
+                                            wire:confirm="Tem certeza que deseja enviar este contrato?"
+                                            class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                            title="Assinar Contrato"
+                                        >
+                                            <i class="fas fa-check"></i>
                                         </button>
                                         @endif
                                         <a
@@ -193,11 +213,11 @@ new class extends Component
                                     $statusColors = [
                                         'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
                                         'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-                                        'assigned' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                        'signed' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                                     ];
                                     $statusLabels = [
                                         'draft' => 'Rascunho',
-                                        'assigned' => 'Assinado',
+                                        'signed' => 'Assinado',
                                         'sent' => 'Enviado',
                                     ];
                                     $status = $contract->status?->value ?? 'draft';
@@ -223,6 +243,16 @@ new class extends Component
                                         title="Gerar PDF"
                                     >
                                         <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                @endif
+                                @if($contract->status->value == 'sent')
+                                    <button
+                                        wire:click="markAsSigned({{ $contract->id }})"
+                                        wire:confirm="Tem certeza que deseja marcar como assinado este contrato?"
+                                        class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                        title="Assinar Contrato"
+                                    >
+                                        <i class="fas fa-check"></i>
                                     </button>
                                 @endif
                                 <a

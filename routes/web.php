@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Route;
  */
 Route::redirect('/', '/acessar');
 
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('welcome');
+
 Route::middleware('guest')->group(function () {
     Route::livewire('/acessar', 'pages::guest.login')->name('login');
     Route::livewire('/registrar', 'pages::guest.register')->name('register');
