@@ -84,14 +84,15 @@ class ContractService
                 $pdf = Pdf::loadHTML($html);
                 $pdfContent = $pdf->output();
             } else {
-                throw new \Exception('PDF library not installed. Please install barryvdh/laravel-dompdf package.');
+                throw new Exception('PDF library not installed. Please install barryvdh/laravel-dompdf package.');
             }
 
-            $response = Http::attach(
-                'file',
-                $pdfContent,
-                'contract-'.$contract->id.'.pdf'
-            )->post('https://contratos-teste.free.beeceptor.com');
+            $base64Pdf = base64_encode($pdfContent);
+
+            $payload = $this->buildZapSignPayload($contract, $base64Pdf);
+
+            $response = Http::withToken('c7f35c84-7893-4087-b4fb-d1f06c23')
+                ->post('https://contratos-teste.free.beeceptor.com', $payload);
 
             if ($response->successful()) {
                 $contract->status = ContractStatus::SENT;
@@ -120,5 +121,48 @@ class ContractService
 
             throw $e;
         }
+    }
+
+    private function buildZapSignPayload(Contract $contract, string $base64Pdf): array
+    {
+        $contractTypeName = match ($contract->type) {
+            ContractType::APP_RENTAL => 'Contrato de Locação para Aplicativo',
+            ContractType::OCCASIONAL_RENTAL => 'Contrato de Locação Eventual',
+        };
+
+        return [
+            'name' => $contractTypeName,
+            'base64_pdf' => $base64Pdf,
+            'signers' => [
+                [
+                    'name' => $contract->driver_name,
+                    'email' => $contract->driver_email ?? '',
+                ],
+            ],
+            'lang' => 'pt-br',
+            'disable_signer_emails' => false,
+            'brand_logo' => config('app.url').'/images/logo.png',
+            'brand_primary_color' => '#0011ee',
+            'brand_name' => config('app.name'),
+            'external_id' => 'contract-'.$contract->id,
+            'folder_path' => '/contratos/',
+            'date_limit_to_sign' => now()->addDays(30)->format('Y-m-d'),
+            'signature_order_active' => false,
+            'reminder_every_n_days' => 3,
+            'allow_refuse_signature' => false,
+            'disable_signers_get_original_file' => false,
+            'metadata' => [
+                [
+                    'key' => 'contract_id',
+                    'value' => (string) $contract->id,
+                ],
+                [
+                    'key' => 'contract_type',
+                    'value' => $contract->type->value,
+                ],
+            ],
+            'has_simplified_signature' => true,
+            'simplified_signature_position' => 'bottom',
+        ];
     }
 }
