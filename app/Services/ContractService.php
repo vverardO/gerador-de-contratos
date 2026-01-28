@@ -5,6 +5,10 @@ namespace App\Services;
 use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
+use Barryvdh\DomPDF\Facade\Pdf;
+use DOMDocument;
+use DOMXPath;
+use Exception;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -39,9 +43,9 @@ class ContractService
 
         $templateContent = view('components.templates.'.$templateName, $templateData)->render();
 
-        $dom = new \DOMDocument;
+        $dom = new DOMDocument;
         @$dom->loadHTML('<?xml encoding="UTF-8">'.$templateContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $xpath = new \DOMXPath($dom);
+        $xpath = new DOMXPath($dom);
 
         $head = $xpath->query('//head')->item(0);
         $body = $xpath->query('//body')->item(0);
@@ -71,13 +75,13 @@ class ContractService
         return '<!DOCTYPE html><html><head><meta charset="UTF-8">'.$styles.'</head><body>'.$bodyContent.'</body></html>';
     }
 
-    public function generatePdf(Contract $contract): void
+    public function generatePdfAndSendToZapSign(Contract $contract): void
     {
         try {
             $html = $this->getContractHtml($contract);
 
-            if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
-                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
+            if (class_exists(Pdf::class)) {
+                $pdf = Pdf::loadHTML($html);
                 $pdfContent = $pdf->output();
             } else {
                 throw new \Exception('PDF library not installed. Please install barryvdh/laravel-dompdf package.');
@@ -99,7 +103,7 @@ class ContractService
                     'response' => $response->body(),
                 ]);
 
-                throw new \Exception('Erro ao enviar PDF. Tente novamente.');
+                throw new Exception('Erro ao enviar PDF. Tente novamente.');
             }
         } catch (RequestException $e) {
             Log::error('Exception while sending PDF', [
@@ -107,8 +111,8 @@ class ContractService
                 'message' => $e->getMessage(),
             ]);
 
-            throw new \Exception('Erro ao enviar PDF: '.$e->getMessage());
-        } catch (\Exception $e) {
+            throw new Exception('Erro ao enviar PDF: '.$e->getMessage());
+        } catch (Exception $e) {
             Log::error('Exception while generating PDF', [
                 'contract_id' => $contract->id,
                 'message' => $e->getMessage(),
