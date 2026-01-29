@@ -22,19 +22,6 @@ class ContractFactory extends Factory
         $modelYear = $year + 1;
         $value = fake()->randomFloat(2, 50, 500);
 
-        $valueInWordsOptions = [
-            'cinquenta reais',
-            'setenta e cinco reais',
-            'oitenta e nove reais e noventa centavos',
-            'cem reais',
-            'cento e cinquenta reais',
-            'duzentos reais',
-            'duzentos e cinquenta reais',
-            'trezentos reais',
-            'quatrocentos reais',
-            'quinhentos reais',
-        ];
-
         $vehicles = [
             'Chevrolet Onix',
             'Volkswagen Gol',
@@ -106,7 +93,6 @@ class ContractFactory extends Factory
             'owner_name' => fake()->company(),
             'owner_document' => fake()->numerify('##.###.###/####-##'),
             'value' => number_format($value, 2, ',', '.'),
-            'value_in_words' => fake()->randomElement($valueInWordsOptions),
             'today_date' => "{$day} de {$month} de {$currentYear}",
             'quantity_days' => null,
             'start_date' => null,

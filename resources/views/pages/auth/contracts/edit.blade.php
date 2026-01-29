@@ -54,8 +54,6 @@ new class extends Component
 
     public string $value = '';
 
-    public string $valueInWords = '';
-
     public string $todayDate = '';
 
     public ?string $quantityDays = null;
@@ -82,7 +80,6 @@ new class extends Component
         $this->ownerName = $this->contract->owner_name;
         $this->ownerDocument = $this->contract->owner_document;
         $this->value = $this->contract->value;
-        $this->valueInWords = $this->contract->value_in_words;
         $this->todayDate = $this->contract->today_date;
         $this->quantityDays = $this->contract->quantity_days !== null ? (string) $this->contract->quantity_days : null;
         $this->startDate = $this->contract->start_date ?? '';
@@ -189,7 +186,6 @@ new class extends Component
             'ownerName' => ['required', 'string', 'max:255'],
             'ownerDocument' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'max:255'],
-            'valueInWords' => ['required', 'string', 'max:255'],
             'todayDate' => ['required', 'string', 'max:255'],
         ];
 
@@ -215,7 +211,6 @@ new class extends Component
             'ownerName.required' => 'O nome do proprietário é obrigatório.',
             'ownerDocument.required' => 'O documento do proprietário é obrigatório.',
             'value.required' => 'O valor do contrato é obrigatório.',
-            'valueInWords.required' => 'O valor por extenso é obrigatório.',
             'todayDate.required' => 'A data de hoje é obrigatória.',
             'quantityDays.required' => 'A quantidade de dias é obrigatória para locação ocasional.',
             'startDate.required' => 'A data de início é obrigatória para locação ocasional.',
@@ -238,7 +233,6 @@ new class extends Component
             'owner_name' => $this->ownerName,
             'owner_document' => $this->ownerDocument,
             'value' => $this->value,
-            'value_in_words' => $this->valueInWords,
             'today_date' => $this->todayDate,
         ];
 
@@ -678,19 +672,6 @@ new class extends Component
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-                    <div class="mt-4">
-                        <label for="valueInWords" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor por Extenso</label>
-                        <input
-                            type="text"
-                            id="valueInWords"
-                            wire:model="valueInWords"
-                            class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                            placeholder="Ex: oitenta e nove reais e noventa centavos"
-                        >
-                        @error('valueInWords')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
                 </div>
 

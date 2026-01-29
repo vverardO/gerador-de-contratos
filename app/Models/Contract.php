@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Enums\ContractStatus;
 use App\Enums\ContractType;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NumberFormatter;
 
 class Contract extends Model
 {
@@ -30,7 +32,6 @@ class Contract extends Model
         'owner_name',
         'owner_document',
         'value',
-        'value_in_words',
         'today_date',
         'quantity_days',
         'start_date',
@@ -41,4 +42,26 @@ class Contract extends Model
         'type' => ContractType::class,
         'status' => ContractStatus::class,
     ];
+
+    protected function valueInWords(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if ($this->value === null || $this->value === '') {
+                return '';
+            }
+
+            $cleanValue = str_replace(['.', ','], ['', '.'], preg_replace('/\.(?=[^\.]*,)/', '', $this->value));
+            $numeric = (float) $cleanValue;
+
+            $reais = floor($numeric);
+            $centavos = (int) round(($numeric - $reais) * 100);
+
+            $formatter = new NumberFormatter('pt_BR', NumberFormatter::SPELLOUT);
+
+            $reaisExtenso = $formatter->format($reais);
+            $centavosExtenso = $formatter->format($centavos);
+
+            return sprintf('%s reais com %s centavos', trim($reaisExtenso), trim($centavosExtenso));
+        });
+    }
 }
