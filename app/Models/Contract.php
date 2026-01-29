@@ -44,22 +44,6 @@ class Contract extends Model
         'value' => 'integer',
     ];
 
-    protected function value(): Attribute
-    {
-        return Attribute::make(
-            set: function (mixed $value): int {
-                if (is_int($value) || (is_string($value) && ctype_digit($value))) {
-                    return (int) $value;
-                }
-                if (is_string($value)) {
-                    $digits = preg_replace('/\D/', '', $value);
-                    return $digits === '' ? 0 : (int) $digits;
-                }
-                return (int) $value;
-            }
-        );
-    }
-
     protected function valueFormatted(): Attribute
     {
         return Attribute::get(function (): string {
