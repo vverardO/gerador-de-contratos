@@ -108,6 +108,34 @@ class ContractFactory extends Factory
             'value' => number_format($value, 2, ',', '.'),
             'value_in_words' => fake()->randomElement($valueInWordsOptions),
             'today_date' => "{$day} de {$month} de {$currentYear}",
+            'quantity_days' => null,
+            'start_date' => null,
+            'end_date' => null,
         ];
+    }
+
+    public function occasionalRental(): static
+    {
+        $day = fake()->numberBetween(1, 28);
+        $months = [
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
+        ];
+        $monthStart = fake()->randomElement($months);
+        $currentYear = date('Y');
+        $quantityDays = fake()->numberBetween(7, 30);
+        $startDate = "{$day} de {$monthStart} de {$currentYear}";
+        $endDate = fake()->dateTimeBetween('+1 week', '+1 month');
+        $endDateFormatted = (int) $endDate->format('d').' de '.[
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
+        ][(int) $endDate->format('n') - 1].' de '.$endDate->format('Y');
+
+        return $this->state(fn () => [
+            'type' => ContractType::OCCASIONAL_RENTAL,
+            'quantity_days' => $quantityDays,
+            'start_date' => $startDate,
+            'end_date' => $endDateFormatted,
+        ]);
     }
 }

@@ -36,6 +36,14 @@ class ContractService
             'data_hoje' => $contract->today_date,
         ];
 
+        if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
+            $templateData['valor_total'] = $contract->value;
+            $templateData['valor_total_extenso'] = $contract->value_in_words;
+            $templateData['quantidade_dias'] = $contract->quantity_days ?? 30;
+            $templateData['data_inicio'] = $contract->start_date ?? $contract->today_date;
+            $templateData['data_fim'] = $contract->end_date ?? $contract->today_date;
+        }
+
         $templateName = match ($contract->type) {
             ContractType::APP_RENTAL => 'app-rental',
             ContractType::OCCASIONAL_RENTAL => 'occasional-rental',

@@ -58,6 +58,12 @@ new class extends Component
 
     public string $todayDate = '';
 
+    public ?string $quantityDays = null;
+
+    public string $startDate = '';
+
+    public string $endDate = '';
+
     public function mount($id)
     {
         $this->contract = Contract::findOrFail($id);
@@ -78,6 +84,9 @@ new class extends Component
         $this->value = $this->contract->value;
         $this->valueInWords = $this->contract->value_in_words;
         $this->todayDate = $this->contract->today_date;
+        $this->quantityDays = $this->contract->quantity_days !== null ? (string) $this->contract->quantity_days : null;
+        $this->startDate = $this->contract->start_date ?? '';
+        $this->endDate = $this->contract->end_date ?? '';
     }
 
     public function logout()
@@ -164,7 +173,7 @@ new class extends Component
 
     public function update()
     {
-        $this->validate([
+        $rules = [
             'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
             'driverName' => ['required', 'string', 'max:255'],
             'driverDocument' => ['required', 'string', 'max:255'],
@@ -182,7 +191,15 @@ new class extends Component
             'value' => ['required', 'string', 'max:255'],
             'valueInWords' => ['required', 'string', 'max:255'],
             'todayDate' => ['required', 'string', 'max:255'],
-        ], [
+        ];
+
+        if ($this->type === 'occasional_rental') {
+            $rules['quantityDays'] = ['required', 'integer', 'min:1', 'max:365'];
+            $rules['startDate'] = ['required', 'string', 'max:255'];
+            $rules['endDate'] = ['required', 'string', 'max:255'];
+        }
+
+        $this->validate($rules, [
             'type.required' => 'O tipo de contrato é obrigatório.',
             'driverName.required' => 'O nome do motorista é obrigatório.',
             'driverDocument.required' => 'O documento do motorista é obrigatório.',
@@ -200,9 +217,12 @@ new class extends Component
             'value.required' => 'O valor do contrato é obrigatório.',
             'valueInWords.required' => 'O valor por extenso é obrigatório.',
             'todayDate.required' => 'A data de hoje é obrigatória.',
+            'quantityDays.required' => 'A quantidade de dias é obrigatória para locação ocasional.',
+            'startDate.required' => 'A data de início é obrigatória para locação ocasional.',
+            'endDate.required' => 'A data de término é obrigatória para locação ocasional.',
         ]);
 
-        $this->contract->update([
+        $payload = [
             'type' => $this->type,
             'driver_name' => $this->driverName,
             'driver_document' => $this->driverDocument,
@@ -220,7 +240,19 @@ new class extends Component
             'value' => $this->value,
             'value_in_words' => $this->valueInWords,
             'today_date' => $this->todayDate,
-        ]);
+        ];
+
+        if ($this->type === 'occasional_rental') {
+            $payload['quantity_days'] = (int) $this->quantityDays;
+            $payload['start_date'] = $this->startDate;
+            $payload['end_date'] = $this->endDate;
+        } else {
+            $payload['quantity_days'] = null;
+            $payload['start_date'] = null;
+            $payload['end_date'] = null;
+        }
+
+        $this->contract->update($payload);
 
         session()->flash('toast', [
             'message' => 'Contrato editado com sucesso',
@@ -270,7 +302,7 @@ new class extends Component
                         <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
                         <select
                             id="type"
-                            wire:model="type"
+                            wire:model.live="type"
                             class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         >
                             <option value="occasional_rental">Locação Ocasional</option>
@@ -281,6 +313,55 @@ new class extends Component
                         @enderror
                     </div>
                 </div>
+
+                @if($type === 'occasional_rental')
+                <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Prazo (Locação Ocasional)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="quantityDays" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantidade de dias</label>
+                            <input
+                                type="number"
+                                id="quantityDays"
+                                wire:model="quantityDays"
+                                min="1"
+                                max="365"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="Ex: 30"
+                            >
+                            @error('quantityDays')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de início</label>
+                            <input
+                                type="text"
+                                id="startDate"
+                                wire:model="startDate"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="Ex: 28 de janeiro de 2026"
+                            >
+                            @error('startDate')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de término</label>
+                            <input
+                                type="text"
+                                id="endDate"
+                                wire:model="endDate"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="Ex: 27 de fevereiro de 2026"
+                            >
+                            @error('endDate')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Motorista</h2>

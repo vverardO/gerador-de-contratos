@@ -32,6 +32,9 @@ class Contract extends Model
         'value',
         'value_in_words',
         'today_date',
+        'quantity_days',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
