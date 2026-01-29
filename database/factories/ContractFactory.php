@@ -20,7 +20,7 @@ class ContractFactory extends Factory
     {
         $year = fake()->numberBetween(2020, 2024);
         $modelYear = $year + 1;
-        $value = fake()->randomFloat(2, 50, 500);
+        $value = fake()->numberBetween(50, 500000);
 
         $vehicles = [
             'Chevrolet Onix',
@@ -92,7 +92,7 @@ class ContractFactory extends Factory
             'renavam' => fake()->numerify('###########'),
             'owner_name' => fake()->company(),
             'owner_document' => fake()->numerify('##.###.###/####-##'),
-            'value' => number_format($value, 2, ',', '.'),
+            'value' => $value,
             'today_date' => "{$day} de {$month} de {$currentYear}",
             'quantity_days' => null,
             'start_date' => null,
