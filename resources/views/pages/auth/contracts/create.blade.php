@@ -8,6 +8,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use DateTime;
 
 new class extends Component
 {
@@ -143,6 +144,42 @@ new class extends Component
             ->get();
     }
 
+    public function updatedStartDate($value): void
+    {
+        $this->computeQuantityDaysFromDates();
+    }
+
+    public function updatedEndDate($value): void
+    {
+        $this->computeQuantityDaysFromDates();
+    }
+
+    protected function computeQuantityDaysFromDates(): void
+    {
+        if ($this->startDate === '' || $this->endDate === '') {
+            $this->quantityDays = null;
+            return;
+        }
+
+        $start = DateTime::createFromFormat('Y-m-d', $this->startDate);
+        $end = DateTime::createFromFormat('Y-m-d', $this->endDate);
+
+        if ($start === false || $end === false) {
+            $this->quantityDays = null;
+            return;
+        }
+
+        if ($start >= $end) {
+            $this->quantityDays = null;
+            $this->addError('endDate', 'A data de término deve ser posterior à data de início.');
+            return;
+        }
+
+        $this->resetValidation('endDate');
+        $diff = $start->diff($end);
+        $this->quantityDays = (string) ($diff->days ?: 0);
+    }
+
     public function save()
     {
         $rules = [
@@ -166,8 +203,8 @@ new class extends Component
 
         if ($this->type === 'occasional_rental') {
             $rules['quantityDays'] = ['required', 'integer', 'min:1', 'max:365'];
-            $rules['startDate'] = ['required', 'string', 'max:255'];
-            $rules['endDate'] = ['required', 'string', 'max:255'];
+            $rules['startDate'] = ['required', 'string', 'date', 'max:255'];
+            $rules['endDate'] = ['required', 'string', 'date', 'after:startDate', 'max:255'];
         }
 
         $this->validate($rules, [
@@ -190,6 +227,7 @@ new class extends Component
             'quantityDays.required' => 'A quantidade de dias é obrigatória para locação ocasional.',
             'startDate.required' => 'A data de início é obrigatória para locação ocasional.',
             'endDate.required' => 'A data de término é obrigatória para locação ocasional.',
+            'endDate.after' => 'A data de término deve ser posterior à data de início.',
         ]);
 
         $payload = [
@@ -292,7 +330,8 @@ new class extends Component
                                 wire:model="quantityDays"
                                 min="1"
                                 max="365"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                readonly
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100"
                                 placeholder="Ex: 30"
                             >
                             @error('quantityDays')
@@ -302,11 +341,10 @@ new class extends Component
                         <div>
                             <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de início</label>
                             <input
-                                type="text"
+                                type="date"
                                 id="startDate"
-                                wire:model="startDate"
+                                wire:model.live="startDate"
                                 class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Ex: 28 de janeiro de 2026"
                             >
                             @error('startDate')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -315,11 +353,10 @@ new class extends Component
                         <div>
                             <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de término</label>
                             <input
-                                type="text"
+                                type="date"
                                 id="endDate"
-                                wire:model="endDate"
+                                wire:model.live="endDate"
                                 class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Ex: 27 de fevereiro de 2026"
                             >
                             @error('endDate')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
