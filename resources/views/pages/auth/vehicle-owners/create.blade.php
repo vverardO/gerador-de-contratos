@@ -16,7 +16,7 @@ new class extends Component
         session()->invalidate();
         session()->regenerateToken();
 
-        return $this->redirect(route('welcome'), navigate: true);
+        return $this->redirect(route('login'), navigate: true);
     }
 
     public function save()
