@@ -128,7 +128,7 @@ new class extends Component
                                         {{ $contract->vehicle }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        R$ {{ $contract->value }}
+                                        R$ {{ $contract->value_formatted }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $contract->type->label() }}
@@ -210,7 +210,7 @@ new class extends Component
                         <div class="p-4">
                             <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $contract->driver_name }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Veículo: {{ $contract->vehicle }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Valor: R$ {{ $contract->value }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Valor: R$ {{ $contract->value_formatted }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                                 Status: 
                                 @php

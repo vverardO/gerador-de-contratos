@@ -154,6 +154,12 @@ new class extends Component
         $this->computeQuantityDaysFromDates();
     }
 
+    private function parseDisplayToCents(string $display): int
+    {
+        $digits = preg_replace('/\D/', '', $display);
+        return $digits === '' ? 0 : (int) $digits;
+    }
+
     protected function computeQuantityDaysFromDates(): void
     {
         if ($this->startDate === '' || $this->endDate === '') {
@@ -245,7 +251,7 @@ new class extends Component
             'renavam' => $this->renavam,
             'owner_name' => $this->ownerName,
             'owner_document' => $this->ownerDocument,
-            'value' => $this->value,
+            'value' => $this->parseDisplayToCents($this->value),
             'today_date' => $this->todayDate,
             'status' => ContractStatus::DRAFT->value,
         ];
@@ -257,6 +263,8 @@ new class extends Component
         }
 
         Contract::create($payload);
+
+        $this->value = '';
 
         session()->flash('toast', [
             'message' => 'Contrato criado com sucesso',
@@ -657,13 +665,55 @@ new class extends Component
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="value" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor</label>
-                            <input
-                                type="text"
-                                id="value"
-                                wire:model="value"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Ex: 89,90"
-                            >
+                            <div class="mt-2 relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">R$</span>
+                                <input
+                                    type="text"
+                                    id="value"
+                                    x-data="{
+                                        formatMoney(value) {
+                                            if (value === null || value === undefined || value === '') return '';
+                                            const num = typeof value === 'number' ? value : parseFloat(value.toString().replace(/[^\d,]/g, '').replace(',', '.'));
+                                            if (isNaN(num)) return '';
+                                            return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                        },
+                                        parseMoney(value) {
+                                            if (!value) return null;
+                                            const cleaned = value.toString().replace(/[^\d]/g, '');
+                                            if (!cleaned) return null;
+                                            return parseFloat(cleaned) / 100;
+                                        },
+                                        applyMoneyMask(event) {
+                                            const input = event.target;
+                                            const value = input.value.replace(/[^\d]/g, '');
+                                            if (!value) {
+                                                input.value = '';
+                                                $wire.set('value', '');
+                                                return;
+                                            }
+                                            const cents = parseInt(value);
+                                            const reais = (cents / 100).toFixed(2);
+                                            input.value = reais.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                            $wire.set('value', input.value);
+                                        },
+                                        init() {
+                                            if (this.$wire.value !== null && this.$wire.value !== undefined && this.$wire.value !== '') {
+                                                this.$el.value = this.formatMoney(this.$wire.value);
+                                            }
+                                            this.$watch('$wire.value', value => {
+                                                if (value !== null && value !== undefined && value !== '') {
+                                                    this.$el.value = this.formatMoney(value);
+                                                } else {
+                                                    this.$el.value = '';
+                                                }
+                                            });
+                                        }
+                                    }"
+                                    x-on:input="applyMoneyMask($event)"
+                                    placeholder="0,00"
+                                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 py-2 pl-10 pr-4 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                >
+                            </div>
                             @error('value')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror

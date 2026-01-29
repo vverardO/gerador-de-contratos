@@ -43,18 +43,28 @@ class Contract extends Model
         'status' => ContractStatus::class,
     ];
 
+    protected function valueFormatted(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $cents = (int) ($this->attributes['value'] ?? 0);
+            if ($cents === 0) {
+                return '0,00';
+            }
+
+            return number_format($cents / 100, 2, ',', '.');
+        });
+    }
+
     protected function valueInWords(): Attribute
     {
         return Attribute::get(function (): string {
-            if ($this->value === null || $this->value === '') {
+            $cents = (int) ($this->attributes['value'] ?? 0);
+            if ($cents === 0) {
                 return '';
             }
 
-            $cleanValue = str_replace(['.', ','], ['', '.'], preg_replace('/\.(?=[^\.]*,)/', '', $this->value));
-            $numeric = (float) $cleanValue;
-
-            $reais = floor($numeric);
-            $centavos = (int) round(($numeric - $reais) * 100);
+            $reais = (int) floor($cents / 100);
+            $centavos = $cents % 100;
 
             $formatter = new NumberFormatter('pt_BR', NumberFormatter::SPELLOUT);
 

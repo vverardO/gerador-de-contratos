@@ -31,13 +31,13 @@ class ContractService
             'renavam' => $contract->renavam,
             'proprietario_nome' => $contract->owner_name,
             'proprietario_documento' => $contract->owner_document,
-            'valor' => $contract->value,
+            'valor' => $contract->value_formatted,
             'valor_extenso' => $contract->value_in_words,
             'data_hoje' => $contract->today_date,
         ];
 
         if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
-            $templateData['valor_total'] = $contract->value;
+            $templateData['valor_total'] = $contract->value_formatted;
             $templateData['valor_total_extenso'] = $contract->value_in_words;
             $templateData['quantidade_dias'] = $contract->quantity_days ?? 30;
             $templateData['data_inicio'] = $contract->start_date ?? $contract->today_date;
