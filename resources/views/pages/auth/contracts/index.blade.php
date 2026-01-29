@@ -11,6 +11,20 @@ new class extends Component
 {
     use WithPagination;
 
+    public string $contractType = '';
+
+    public string $search = '';
+
+    public function updatedContractType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
     public function logout()
     {
         Auth::logout();
@@ -50,8 +64,21 @@ new class extends Component
 
     public function getContractsProperty()
     {
-        return Contract::latest()
-            ->paginate(7);
+        $query = Contract::latest();
+
+        if ($this->contractType !== '') {
+            $query->where('type', $this->contractType);
+        }
+
+        if ($this->search !== '') {
+            $term = trim($this->search);
+            $query->where(function ($q) use ($term) {
+                $q->where('driver_name', 'like', "%{$term}%")
+                    ->orWhere('vehicle', 'like', "%{$term}%");
+            });
+        }
+
+        return $query->paginate(7);
     }
 
     public function markAsSigned($id)
@@ -96,8 +123,33 @@ new class extends Component
 
     <main class="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Contratos</h1>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div class="w-full sm:w-auto">
+                        <label for="filterContractType" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Tipo</label>
+                        <select
+                            id="filterContractType"
+                            wire:model.live="contractType"
+                            class="w-full sm:w-48 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Todos</option>
+                            @foreach(\App\Enums\ContractType::cases() as $type)
+                                <option value="{{ $type->value }}">{{ $type->label() }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <label for="filterSearch" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Motorista ou veículo</label>
+                        <input
+                            id="filterSearch"
+                            type="text"
+                            wire:model.live.debounce.300ms="search"
+                            placeholder="Buscar por nome ou veículo..."
+                            class="w-full sm:w-56 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+                </div>
             </div>
 
             @if($this->contracts->count() > 0)
