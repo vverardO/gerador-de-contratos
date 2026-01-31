@@ -3,6 +3,7 @@
 use App\Models\Driver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component
@@ -38,7 +39,7 @@ new class extends Component
     {
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'document' => ['required', 'string', 'max:255'],
+            'document' => ['required', 'string', 'max:255', Rule::unique('drivers', 'document')],
             'postalCode' => ['required', 'string', 'max:255'],
             'street' => ['required', 'string', 'max:255'],
             'number' => ['nullable', 'string', 'max:255'],
@@ -49,6 +50,7 @@ new class extends Component
         ], [
             'name.required' => 'O nome é obrigatório.',
             'document.required' => 'O documento é obrigatório.',
+            'document.unique' => 'Este documento já está cadastrado.',
             'postalCode.required' => 'O CEP é obrigatório.',
             'street.required' => 'A rua é obrigatória.',
             'neighborhood.required' => 'O bairro é obrigatório.',

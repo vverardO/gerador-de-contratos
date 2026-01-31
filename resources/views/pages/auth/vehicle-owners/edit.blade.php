@@ -2,6 +2,7 @@
 
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component
@@ -32,10 +33,11 @@ new class extends Component
     {
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'document' => ['required', 'string', 'max:255'],
+            'document' => ['required', 'string', 'max:255', Rule::unique('vehicle_owners', 'document')->ignore($this->vehicleOwner->id)],
         ], [
             'name.required' => 'O nome é obrigatório.',
             'document.required' => 'O documento é obrigatório.',
+            'document.unique' => 'Este documento já está cadastrado.',
         ]);
 
         $this->vehicleOwner->update([

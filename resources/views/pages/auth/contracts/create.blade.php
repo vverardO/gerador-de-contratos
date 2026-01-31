@@ -9,6 +9,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleModel;
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component
@@ -321,7 +322,16 @@ new class extends Component
         $rules = [
             'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
             'driverName' => ['required', 'string', 'max:255'],
-            'driverDocument' => ['required', 'string', 'max:255'],
+            'driverDocument' => array_merge(
+                ['required', 'string', 'max:255'],
+                $this->creatingNewDriver ? [
+                    function ($attribute, $value, $fail) {
+                        if (Driver::where('document', $this->documentToRaw($value))->exists()) {
+                            $fail('Este documento de motorista já está cadastrado.');
+                        }
+                    },
+                ] : []
+            ),
             'driverStreet' => ['required', 'string', 'max:255'],
             'driverNumber' => ['required', 'string', 'max:255'],
             'driverNeighborhood' => ['required', 'string', 'max:255'],
@@ -337,7 +347,16 @@ new class extends Component
 
         if ($this->creatingNewOwner) {
             $rules['newOwnerName'] = ['required', 'string', 'max:255'];
-            $rules['newOwnerDocument'] = ['required', 'string', 'max:255'];
+            $rules['newOwnerDocument'] = [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (VehicleOwner::where('document', $this->documentToRaw($value))->exists()) {
+                        $fail('Este documento de proprietário já está cadastrado.');
+                    }
+                },
+            ];
         } else {
             $rules['ownerName'] = ['required', 'string', 'max:255'];
             $rules['ownerDocument'] = ['required', 'string', 'max:255'];
@@ -345,6 +364,13 @@ new class extends Component
 
         if ($this->creatingNewVehicle) {
             $rules['vehicleModelId'] = ['required', 'exists:vehicle_models,id'];
+            $rules['licensePlate'] = array_merge($rules['licensePlate'], [
+                function ($attribute, $value, $fail) {
+                    if (Vehicle::where('license_plate', strtoupper($value))->exists()) {
+                        $fail('Esta placa já está cadastrada.');
+                    }
+                },
+            ]);
             if (! $this->creatingNewOwner) {
                 $rules['selectedVehicleOwnerId'] = ['required', 'exists:vehicle_owners,id'];
             }

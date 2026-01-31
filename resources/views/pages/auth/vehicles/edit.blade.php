@@ -4,6 +4,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleModel;
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component
@@ -107,7 +108,7 @@ new class extends Component
         $rules = [
             'vehicleModelId' => ['required', 'exists:vehicle_models,id'],
             'manufacturingModel' => ['required', 'string', 'max:255'],
-            'licensePlate' => ['required', 'string', 'max:255'],
+            'licensePlate' => ['required', 'string', 'max:255', Rule::unique('vehicles', 'license_plate')->ignore($this->vehicle->id)],
             'chassis' => ['required', 'string', 'max:255'],
             'renavam' => ['required', 'string', 'max:255'],
         ];
@@ -115,7 +116,7 @@ new class extends Component
         $vehicleOwnerId = null;
         if ($this->creatingNewOwner) {
             $rules['newOwnerName'] = ['required', 'string', 'max:255'];
-            $rules['newOwnerDocument'] = ['required', 'string', 'max:255'];
+            $rules['newOwnerDocument'] = ['required', 'string', 'max:255', Rule::unique('vehicle_owners', 'document')];
         } else {
             $rules['selectedVehicleOwnerId'] = ['nullable', 'exists:vehicle_owners,id'];
         }
@@ -128,6 +129,8 @@ new class extends Component
             'newOwnerDocument.required' => 'O documento do proprietário é obrigatório.',
             'manufacturingModel.required' => 'A fabricação/modelo é obrigatória.',
             'licensePlate.required' => 'A placa é obrigatória.',
+            'licensePlate.unique' => 'Esta placa já está cadastrada.',
+            'newOwnerDocument.unique' => 'Este documento já está cadastrado.',
             'chassis.required' => 'O chassi é obrigatório.',
             'renavam.required' => 'O RENAVAM é obrigatório.',
         ]);
