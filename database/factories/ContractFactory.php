@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\ContractStatus;
 use App\Enums\ContractType;
+use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,19 +22,6 @@ class ContractFactory extends Factory
         $year = fake()->numberBetween(2020, 2024);
         $modelYear = $year + 1;
         $valueCents = fake()->numberBetween(5000, 500000);
-
-        $vehicles = [
-            'Chevrolet Onix',
-            'Volkswagen Gol',
-            'Fiat Uno',
-            'Ford Ka',
-            'Renault Kwid',
-            'Hyundai HB20',
-            'Toyota Corolla',
-            'Honda Civic',
-            'Chevrolet Prisma',
-            'Volkswagen Voyage',
-        ];
 
         $streets = [
             'Rua das Flores',
@@ -85,7 +73,7 @@ class ContractFactory extends Factory
             'driver_number' => fake()->numberBetween(1, 9999),
             'driver_neighborhood' => fake()->randomElement($neighborhoods),
             'driver_zip_code' => fake()->numerify('#####-###'),
-            'vehicle' => fake()->randomElement($vehicles),
+            'vehicle' => Vehicle::inRandomOrder()->first()->display_name,
             'manufacturing_model' => "{$year}/{$modelYear}",
             'license_plate' => fake()->regexify('[A-Z]{3}[0-9][A-Z][0-9]{2}'),
             'chassis' => fake()->regexify('[A-Z0-9]{17}'),

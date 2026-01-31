@@ -10,7 +10,7 @@ class VehicleFactory extends Factory
     public function definition(): array
     {
         return [
-            'vehicle_model_id' => VehicleModel::factory(),
+            'vehicle_model_id' => VehicleModel::inRandomOrder()->first()->id,
             'manufacturing_model' => fake()->year().'/'.fake()->year(),
             'license_plate' => fake()->regexify('[A-Z]{3}[0-9][A-Z][0-9]{2}'),
             'chassis' => fake()->numerify('##################'),
