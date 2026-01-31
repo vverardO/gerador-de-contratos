@@ -25,6 +25,14 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/motoristas/criar', 'pages::auth.drivers.create')->name('drivers.create');
     Route::livewire('/motoristas/{id}/editar', 'pages::auth.drivers.edit')->name('drivers.edit');
 
+    Route::livewire('/marcas', 'pages::auth.vehicle-brands.index')->name('vehicleBrands.index');
+    Route::livewire('/marcas/criar', 'pages::auth.vehicle-brands.create')->name('vehicleBrands.create');
+    Route::livewire('/marcas/{id}/editar', 'pages::auth.vehicle-brands.edit')->name('vehicleBrands.edit');
+
+    Route::livewire('/modelos', 'pages::auth.vehicle-models.index')->name('vehicleModels.index');
+    Route::livewire('/modelos/criar', 'pages::auth.vehicle-models.create')->name('vehicleModels.create');
+    Route::livewire('/modelos/{id}/editar', 'pages::auth.vehicle-models.edit')->name('vehicleModels.edit');
+
     Route::livewire('/proprietarios', 'pages::auth.vehicle-owners.index')->name('vehicleOwners.index');
     Route::livewire('/proprietarios/criar', 'pages::auth.vehicle-owners.create')->name('vehicleOwners.create');
     Route::livewire('/proprietarios/{id}/editar', 'pages::auth.vehicle-owners.edit')->name('vehicleOwners.edit');
