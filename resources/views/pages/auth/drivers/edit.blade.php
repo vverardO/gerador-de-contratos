@@ -121,11 +121,7 @@ new class extends Component
         )->json();
 
         if (isset($address['erro']) || ! $address) {
-            $this->dispatch(
-                'alert',
-                type: 'error',
-                message: 'CEP não encontrado, digite o endereço manualmente!'
-            );
+            $this->dispatch('alert', type: 'error', message: 'CEP não encontrado, digite o endereço manualmente!');
 
             return;
         }

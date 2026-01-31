@@ -44,6 +44,9 @@ new class extends Component
 
     public function generatePdf($id)
     {
+        $this->dispatch('toast', message: 'Ainda to implementando', type: 'error');
+        return;
+
         try {
             $contract = Contract::findOrFail($id);
             $contractService = app(ContractService::class);
@@ -52,12 +55,8 @@ new class extends Component
             $contract->status = ContractStatus::SENT;
             $contract->save();
 
-            $this->dispatch(
-                'toast',
-                message: 'PDF gerado e enviado com sucesso!',
-                type: 'success'
-            );
-        } catch (\Exception $e) {
+            $this->dispatch('toast', message: 'PDF gerado e enviado com sucesso!', type: 'success');
+        } catch (Exception $e) {
             $this->dispatch('toast', message: $e->getMessage(), type: 'error');
         }
     }
@@ -87,8 +86,7 @@ new class extends Component
         $contract->status = ContractStatus::SIGNED;
         $contract->save();
 
-        $this->dispatch(
-            'toast', message: 'Contrato assinado com sucesso', type: 'success');
+        $this->dispatch('toast', message: 'Contrato assinado com sucesso', type: 'success');
     }
 }
 ?>
@@ -223,6 +221,15 @@ new class extends Component
                                             title="Assinar Contrato"
                                         >
                                             <i class="fas fa-check"></i>
+                                        </button>
+                                        @endif
+                                        @if($contract->status->value == 'draft')
+                                        <button
+                                            wire:click="generatePdf({{ $contract->id }})"
+                                            class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
+                                            title="Gerar PDF"
+                                        >
+                                            <i class="fas fa-file-pdf"></i>
                                         </button>
                                         @endif
                                         <a
