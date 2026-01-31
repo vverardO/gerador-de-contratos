@@ -4,7 +4,9 @@ use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Models\Driver;
+use App\Models\DriverAddress;
 use App\Models\Vehicle;
+use App\Models\VehicleModel;
 use App\Models\VehicleOwner;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -17,13 +19,25 @@ new class extends Component
 
     public ?int $selectedDriverId = null;
 
+    public bool $creatingNewDriver = false;
+
     public string $vehicleOwnerSearch = '';
 
     public ?int $selectedVehicleOwnerId = null;
 
+    public bool $creatingNewOwner = false;
+
+    public string $newOwnerName = '';
+
+    public string $newOwnerDocument = '';
+
     public string $vehicleSearch = '';
 
     public ?int $selectedVehicleId = null;
+
+    public bool $creatingNewVehicle = false;
+
+    public string $vehicleModelId = '';
 
     public string $driverName = '';
 
@@ -78,7 +92,8 @@ new class extends Component
     public function selectDriver($driverId)
     {
         $driver = Driver::with('address')->findOrFail($driverId);
-        $this->selectedDriverId = $driverId;
+        $this->selectedDriverId = (int) $driverId;
+        $this->creatingNewDriver = false;
         $this->driverName = $driver->name;
         $this->driverDocument = $driver->document_formatted;
         $this->driverSearch = $driver->name;
@@ -89,6 +104,30 @@ new class extends Component
             $this->driverNeighborhood = $driver->address->neighborhood;
             $this->driverZipCode = $driver->address->postal_code;
         }
+    }
+
+    public function clearDriver()
+    {
+        $this->selectedDriverId = null;
+        $this->driverSearch = '';
+    }
+
+    public function showNewDriverForm()
+    {
+        $this->creatingNewDriver = true;
+        $this->selectedDriverId = null;
+        $this->driverSearch = '';
+        $this->driverName = '';
+        $this->driverDocument = '';
+        $this->driverStreet = '';
+        $this->driverNumber = '';
+        $this->driverNeighborhood = '';
+        $this->driverZipCode = '';
+    }
+
+    public function showSearchDriver()
+    {
+        $this->creatingNewDriver = false;
     }
 
     public function getDriversProperty()
@@ -106,10 +145,33 @@ new class extends Component
     public function selectVehicleOwner($vehicleOwnerId)
     {
         $vehicleOwner = VehicleOwner::findOrFail($vehicleOwnerId);
-        $this->selectedVehicleOwnerId = $vehicleOwnerId;
+        $this->selectedVehicleOwnerId = (int) $vehicleOwnerId;
+        $this->creatingNewOwner = false;
         $this->ownerName = $vehicleOwner->name;
         $this->ownerDocument = $vehicleOwner->document_formatted;
         $this->vehicleOwnerSearch = $vehicleOwner->name;
+    }
+
+    public function clearVehicleOwner()
+    {
+        $this->selectedVehicleOwnerId = null;
+        $this->vehicleOwnerSearch = '';
+    }
+
+    public function showNewOwnerForm()
+    {
+        $this->creatingNewOwner = true;
+        $this->selectedVehicleOwnerId = null;
+        $this->vehicleOwnerSearch = '';
+        $this->newOwnerName = '';
+        $this->newOwnerDocument = '';
+    }
+
+    public function showSearchOwner()
+    {
+        $this->creatingNewOwner = false;
+        $this->newOwnerName = '';
+        $this->newOwnerDocument = '';
     }
 
     public function getVehicleOwnersProperty()
@@ -127,20 +189,65 @@ new class extends Component
     public function selectVehicle($vehicleId)
     {
         $vehicle = Vehicle::with('vehicleModel.vehicleBrand')->findOrFail($vehicleId);
-
-        $this->selectedVehicleId = $vehicleId;
+        $this->selectedVehicleId = (int) $vehicleId;
+        $this->creatingNewVehicle = false;
         $this->vehicle = $vehicle->display_name;
         $this->manufacturingModel = $vehicle->manufacturing_model;
         $this->licensePlate = $vehicle->license_plate;
         $this->chassis = $vehicle->chassis;
         $this->renavam = $vehicle->renavam;
+        $this->vehicleSearch = $vehicle->display_name;
 
         if ($vehicle->vehicleOwner) {
             $this->selectedVehicleOwnerId = $vehicle->vehicleOwner->id;
+            $this->creatingNewOwner = false;
             $this->ownerName = $vehicle->vehicleOwner->name;
-            $this->ownerDocument = $vehicle->vehicleOwner->document;
+            $this->ownerDocument = $vehicle->vehicleOwner->document_formatted;
             $this->vehicleOwnerSearch = $vehicle->vehicleOwner->name;
         }
+    }
+
+    public function clearVehicle()
+    {
+        $this->selectedVehicleId = null;
+        $this->vehicleSearch = '';
+    }
+
+    public function showNewVehicleForm()
+    {
+        $this->creatingNewVehicle = true;
+        $this->selectedVehicleId = null;
+        $this->vehicleSearch = '';
+        $this->vehicle = '';
+        $this->manufacturingModel = '';
+        $this->licensePlate = '';
+        $this->chassis = '';
+        $this->renavam = '';
+        $this->vehicleModelId = '';
+    }
+
+    public function showSearchVehicle()
+    {
+        $this->creatingNewVehicle = false;
+        $this->vehicleModelId = '';
+    }
+
+    public function updatedVehicleModelId($value)
+    {
+        if ($value && $this->creatingNewVehicle) {
+            $model = VehicleModel::with('vehicleBrand')->find($value);
+            if ($model) {
+                $this->vehicle = $model->vehicleBrand->title . ' - ' . $model->title;
+            }
+        }
+    }
+
+    public function getVehicleModelsProperty()
+    {
+        return VehicleModel::with('vehicleBrand')
+            ->orderBy('vehicle_brand_id')
+            ->orderBy('title')
+            ->get();
     }
 
     public function getVehiclesProperty()
@@ -204,6 +311,11 @@ new class extends Component
         $this->quantityDays = (string) ($diff->days ?: 0);
     }
 
+    private function documentToRaw(string $document): string
+    {
+        return preg_replace('/\D/', '', $document);
+    }
+
     public function save()
     {
         $rules = [
@@ -219,11 +331,24 @@ new class extends Component
             'licensePlate' => ['required', 'string', 'max:255'],
             'chassis' => ['required', 'string', 'max:255'],
             'renavam' => ['required', 'string', 'max:255'],
-            'ownerName' => ['required', 'string', 'max:255'],
-            'ownerDocument' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'max:255'],
             'todayDate' => ['required', 'string', 'max:255'],
         ];
+
+        if ($this->creatingNewOwner) {
+            $rules['newOwnerName'] = ['required', 'string', 'max:255'];
+            $rules['newOwnerDocument'] = ['required', 'string', 'max:255'];
+        } else {
+            $rules['ownerName'] = ['required', 'string', 'max:255'];
+            $rules['ownerDocument'] = ['required', 'string', 'max:255'];
+        }
+
+        if ($this->creatingNewVehicle) {
+            $rules['vehicleModelId'] = ['required', 'exists:vehicle_models,id'];
+            if (! $this->creatingNewOwner) {
+                $rules['selectedVehicleOwnerId'] = ['required', 'exists:vehicle_owners,id'];
+            }
+        }
 
         if ($this->type === 'occasional_rental') {
             $rules['quantityDays'] = ['required', 'integer', 'min:1', 'max:365'];
@@ -246,6 +371,12 @@ new class extends Component
             'renavam.required' => 'O RENAVAM é obrigatório.',
             'ownerName.required' => 'O nome do proprietário é obrigatório.',
             'ownerDocument.required' => 'O documento do proprietário é obrigatório.',
+            'newOwnerName.required' => 'O nome do proprietário é obrigatório.',
+            'newOwnerDocument.required' => 'O documento do proprietário é obrigatório.',
+            'vehicleModelId.required' => 'O modelo do veículo é obrigatório.',
+            'vehicleModelId.exists' => 'O modelo selecionado é inválido.',
+            'selectedVehicleOwnerId.required' => 'Selecione ou cadastre um proprietário para o veículo.',
+            'selectedVehicleOwnerId.exists' => 'O proprietário selecionado é inválido.',
             'value.required' => 'O valor do contrato é obrigatório.',
             'todayDate.required' => 'A data de hoje é obrigatória.',
             'quantityDays.required' => 'A quantidade de dias é obrigatória para locação ocasional.',
@@ -253,6 +384,47 @@ new class extends Component
             'endDate.required' => 'A data de término é obrigatória para locação ocasional.',
             'endDate.after' => 'A data de término deve ser posterior à data de início.',
         ]);
+
+        if ($this->creatingNewDriver) {
+            $driver = Driver::create([
+                'name' => $this->driverName,
+                'document' => $this->documentToRaw($this->driverDocument),
+            ]);
+            DriverAddress::create([
+                'driver_id' => $driver->id,
+                'postal_code' => $this->documentToRaw($this->driverZipCode),
+                'street' => $this->driverStreet,
+                'number' => $this->driverNumber ?: null,
+                'neighborhood' => $this->driverNeighborhood,
+                'city' => '',
+                'state' => '',
+            ]);
+        }
+
+        $vehicleOwnerId = null;
+        if ($this->creatingNewOwner) {
+            $vehicleOwner = VehicleOwner::create([
+                'name' => $this->newOwnerName,
+                'document' => $this->documentToRaw($this->newOwnerDocument),
+            ]);
+            $vehicleOwnerId = $vehicleOwner->id;
+        } else {
+            $vehicleOwnerId = $this->selectedVehicleOwnerId;
+        }
+
+        if ($this->creatingNewVehicle && $vehicleOwnerId) {
+            Vehicle::create([
+                'vehicle_model_id' => $this->vehicleModelId,
+                'vehicle_owner_id' => $vehicleOwnerId,
+                'manufacturing_model' => $this->manufacturingModel,
+                'license_plate' => strtoupper($this->licensePlate),
+                'chassis' => $this->chassis,
+                'renavam' => $this->renavam,
+            ]);
+        }
+
+        $ownerName = $this->creatingNewOwner ? $this->newOwnerName : $this->ownerName;
+        $ownerDocument = $this->creatingNewOwner ? $this->newOwnerDocument : $this->ownerDocument;
 
         $payload = [
             'type' => $this->type,
@@ -267,8 +439,8 @@ new class extends Component
             'license_plate' => $this->licensePlate,
             'chassis' => $this->chassis,
             'renavam' => $this->renavam,
-            'owner_name' => $this->ownerName,
-            'owner_document' => $this->ownerDocument,
+            'owner_name' => $ownerName,
+            'owner_document' => $ownerDocument,
             'value' => $this->parseDisplayToCents($this->value),
             'today_date' => $this->todayDate,
             'status' => ContractStatus::DRAFT->value,
@@ -394,37 +566,52 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Motorista</h2>
-                    <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
-                        <label for="driverSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Motorista</label>
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="driverSearch"
-                                wire:model.live="driverSearch"
-                                x-on:focus="open = true"
-                                x-on:input="open = true"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Digite o nome ou documento do motorista"
-                            >
-                            @if($this->drivers->count() > 0 && $driverSearch && !$selectedDriverId)
-                                <div x-show="open" 
-                                     x-cloak
-                                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    @foreach($this->drivers as $driver)
-                                        <button
-                                            type="button"
-                                            wire:click="selectDriver({{ $driver->id }})"
-                                            x-on:click="open = false"
-                                            class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
-                                        >
-                                            <div class="font-medium">{{ $driver->name }}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $driver->document }}</div>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @endif
+                    @if($creatingNewDriver)
+                        <div class="mb-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Preencha os dados do novo motorista abaixo.</p>
+                            <button type="button" wire:click="showSearchDriver" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Buscar motorista existente
+                            </button>
                         </div>
-                    </div>
+                    @else
+                        <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
+                            <label for="driverSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Motorista</label>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="driverSearch"
+                                    wire:model.live="driverSearch"
+                                    x-on:focus="open = true"
+                                    x-on:input="open = true"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Digite o nome ou documento do motorista"
+                                >
+                                @if($selectedDriverId)
+                                    <button type="button" wire:click="clearDriver" class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Limpar</button>
+                                @endif
+                                @if($this->drivers->count() > 0 && $driverSearch && !$selectedDriverId)
+                                    <div x-show="open"
+                                         x-cloak
+                                         class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        @foreach($this->drivers as $driver)
+                                            <button
+                                                type="button"
+                                                wire:click="selectDriver({{ $driver->id }})"
+                                                x-on:click="open = false"
+                                                class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
+                                            >
+                                                <div class="font-medium">{{ $driver->name }}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $driver->document }}</div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                            <button type="button" wire:click="showNewDriverForm" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Cadastrar novo motorista
+                            </button>
+                        </div>
+                    @endif
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="driverName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Motorista</label>
@@ -515,37 +702,68 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Veículo</h2>
-                    <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
-                        <label for="vehicleSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Veículo</label>
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="vehicleSearch"
-                                wire:model.live="vehicleSearch"
-                                x-on:focus="open = true"
-                                x-on:input="open = true"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Digite o nome ou placa do veículo"
-                            >
-                            @if($this->vehicles->count() > 0 && $vehicleSearch && !$selectedVehicleId)
-                                <div x-show="open" 
-                                     x-cloak
-                                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    @foreach($this->vehicles as $vehicle)
-                                        <button
-                                            type="button"
-                                            wire:click="selectVehicle({{ $vehicle->id }})"
-                                            x-on:click="open = false"
-                                            class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
-                                        >
-                                            <div class="font-medium">{{ $vehicle->display_name }}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicle->license_plate }}</div>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @endif
+                    @if($creatingNewVehicle)
+                        <div class="mb-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Preencha os dados do novo veículo. Selecione ou cadastre o proprietário na seção abaixo.</p>
+                            <button type="button" wire:click="showSearchVehicle" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Buscar veículo existente
+                            </button>
                         </div>
-                    </div>
+                        <div class="mb-4">
+                            <label for="vehicleModelId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modelo do Veículo</label>
+                            <select
+                                id="vehicleModelId"
+                                wire:model="vehicleModelId"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            >
+                                <option value="">Selecione o modelo</option>
+                                @foreach($this->vehicleModels as $model)
+                                    <option value="{{ $model->id }}">{{ $model->vehicleBrand->title }} - {{ $model->title }}</option>
+                                @endforeach
+                            </select>
+                            @error('vehicleModelId')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @else
+                        <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
+                            <label for="vehicleSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Veículo</label>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="vehicleSearch"
+                                    wire:model.live="vehicleSearch"
+                                    x-on:focus="open = true"
+                                    x-on:input="open = true"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Digite o nome ou placa do veículo"
+                                >
+                                @if($selectedVehicleId)
+                                    <button type="button" wire:click="clearVehicle" class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Limpar</button>
+                                @endif
+                                @if($this->vehicles->count() > 0 && $vehicleSearch && !$selectedVehicleId)
+                                    <div x-show="open"
+                                         x-cloak
+                                         class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        @foreach($this->vehicles as $vehicle)
+                                            <button
+                                                type="button"
+                                                wire:click="selectVehicle({{ $vehicle->id }})"
+                                                x-on:click="open = false"
+                                                class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
+                                            >
+                                                <div class="font-medium">{{ $vehicle->display_name }}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicle->license_plate }}</div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                            <button type="button" wire:click="showNewVehicleForm" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Cadastrar novo veículo
+                            </button>
+                        </div>
+                    @endif
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="vehicle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Veículo</label>
@@ -617,37 +835,80 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Proprietário</h2>
-                    <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
-                        <label for="vehicleOwnerSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Proprietário</label>
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="vehicleOwnerSearch"
-                                wire:model.live="vehicleOwnerSearch"
-                                x-on:focus="open = true"
-                                x-on:input="open = true"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Digite o nome ou documento do proprietário"
-                            >
-                            @if($this->vehicleOwners->count() > 0 && $vehicleOwnerSearch && !$selectedVehicleOwnerId)
-                                <div x-show="open" 
-                                     x-cloak
-                                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    @foreach($this->vehicleOwners as $vehicleOwner)
-                                        <button
-                                            type="button"
-                                            wire:click="selectVehicleOwner({{ $vehicleOwner->id }})"
-                                            x-on:click="open = false"
-                                            class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
-                                        >
-                                            <div class="font-medium">{{ $vehicleOwner->name }}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicleOwner->document }}</div>
-                                        </button>
-                                    @endforeach
+                    @if($creatingNewOwner)
+                        <div class="space-y-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="newOwnerName" class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nome</label>
+                                    <input
+                                        type="text"
+                                        id="newOwnerName"
+                                        wire:model="newOwnerName"
+                                        class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                        placeholder="Nome do proprietário"
+                                    >
+                                    @error('newOwnerName')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                            @endif
+                                <div>
+                                    <label for="newOwnerDocument" class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Documento</label>
+                                    <input
+                                        type="text"
+                                        id="newOwnerDocument"
+                                        wire:model="newOwnerDocument"
+                                        class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                        placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                                    >
+                                    @error('newOwnerDocument')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                            <button type="button" wire:click="showSearchOwner" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Buscar proprietário existente
+                            </button>
                         </div>
-                    </div>
+                    @else
+                        <div class="mb-4" x-data="{ open: false }" x-on:click.away="open = false">
+                            <label for="vehicleOwnerSearch" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Proprietário</label>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="vehicleOwnerSearch"
+                                    wire:model.live="vehicleOwnerSearch"
+                                    x-on:focus="open = true"
+                                    x-on:input="open = true"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Digite o nome ou documento do proprietário"
+                                >
+                                @if($selectedVehicleOwnerId)
+                                    <button type="button" wire:click="clearVehicleOwner" class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Limpar</button>
+                                @endif
+                                @if($this->vehicleOwners->count() > 0 && $vehicleOwnerSearch && !$selectedVehicleOwnerId)
+                                    <div x-show="open"
+                                         x-cloak
+                                         class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        @foreach($this->vehicleOwners as $vehicleOwner)
+                                            <button
+                                                type="button"
+                                                wire:click="selectVehicleOwner({{ $vehicleOwner->id }})"
+                                                x-on:click="open = false"
+                                                class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
+                                            >
+                                                <div class="font-medium">{{ $vehicleOwner->name }}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicleOwner->document }}</div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                            <button type="button" wire:click="showNewOwnerForm" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Cadastrar novo proprietário
+                            </button>
+                        </div>
+                    @endif
+                    @if(!$creatingNewOwner)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="ownerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Proprietário</label>
@@ -676,6 +937,7 @@ new class extends Component
                             @enderror
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">

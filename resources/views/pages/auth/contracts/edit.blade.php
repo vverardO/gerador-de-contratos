@@ -458,6 +458,7 @@ new class extends Component
                         <div>
                             <label for="driverName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Motorista</label>
                             <input
+                                readonly
                                 type="text"
                                 id="driverName"
                                 wire:model="driverName"
@@ -471,6 +472,7 @@ new class extends Component
                         <div>
                             <label for="driverDocument" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Documento do Motorista</label>
                             <input
+                                readonly    
                                 type="text"
                                 id="driverDocument"
                                 wire:model="driverDocument"
@@ -487,6 +489,7 @@ new class extends Component
                             <div>
                                 <label for="driverZipCode" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CEP</label>
                                 <input
+                                    readonly
                                     type="text"
                                     id="driverZipCode"
                                     wire:model="driverZipCode"
@@ -500,6 +503,7 @@ new class extends Component
                             <div class="md:col-span-2">
                                 <label for="driverStreet" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rua</label>
                                 <input
+                                    readonly
                                     type="text"
                                     id="driverStreet"
                                     wire:model="driverStreet"
@@ -515,6 +519,7 @@ new class extends Component
                             <div>
                                 <label for="driverNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número</label>
                                 <input
+                                    readonly
                                     type="text"
                                     id="driverNumber"
                                     wire:model="driverNumber"
@@ -528,6 +533,7 @@ new class extends Component
                             <div>
                                 <label for="driverNeighborhood" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bairro</label>
                                 <input
+                                    readonly
                                     type="text"
                                     id="driverNeighborhood"
                                     wire:model="driverNeighborhood"
@@ -579,6 +585,7 @@ new class extends Component
                         <div>
                             <label for="vehicle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Veículo</label>
                             <input
+                                readonly
                                 type="text"
                                 id="vehicle"
                                 wire:model="vehicle"
@@ -592,6 +599,7 @@ new class extends Component
                         <div>
                             <label for="manufacturingModel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fabricação/Modelo</label>
                             <input
+                                readonly
                                 type="text"
                                 id="manufacturingModel"
                                 wire:model="manufacturingModel"
@@ -605,6 +613,7 @@ new class extends Component
                         <div>
                             <label for="licensePlate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Placa</label>
                             <input
+                                readonly
                                 type="text"
                                 id="licensePlate"
                                 wire:model="licensePlate"
@@ -618,6 +627,7 @@ new class extends Component
                         <div>
                             <label for="chassis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chassi</label>
                             <input
+                                readonly
                                 type="text"
                                 id="chassis"
                                 wire:model="chassis"
@@ -631,6 +641,7 @@ new class extends Component
                         <div>
                             <label for="renavam" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">RENAVAM</label>
                             <input
+                                readonly
                                 type="text"
                                 id="renavam"
                                 wire:model="renavam"
@@ -681,6 +692,7 @@ new class extends Component
                         <div>
                             <label for="ownerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do Proprietário</label>
                             <input
+                                readonly
                                 type="text"
                                 id="ownerName"
                                 wire:model="ownerName"
@@ -694,6 +706,7 @@ new class extends Component
                         <div>
                             <label for="ownerDocument" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Documento do Proprietário</label>
                             <input
+                                readonly
                                 type="text"
                                 id="ownerDocument"
                                 wire:model="ownerDocument"
