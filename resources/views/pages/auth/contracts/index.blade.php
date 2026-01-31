@@ -204,7 +204,7 @@ new class extends Component
                                         </span>
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $contract->created_at->format('M d, Y') }}
+                                        {{ $contract->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a
@@ -273,7 +273,7 @@ new class extends Component
                                     {{ $statusLabels[$status] ?? 'Rascunho' }}
                                 </span>
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $contract->created_at->format('M d, Y') }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $contract->created_at->format('d/m/Y H:i') }}</div>
                             <div class="flex gap-3">
                                 <a
                                     href="{{ route('contracts.show', $contract->id) }}"

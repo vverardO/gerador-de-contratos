@@ -128,7 +128,7 @@ new class extends Component
                                         {{ $vehicle->license_plate }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $vehicle->created_at->format('M d, Y') }}
+                                        {{ $vehicle->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a
@@ -160,7 +160,7 @@ new class extends Component
                             <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $vehicle->display_name }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Fabricação/Modelo: {{ $vehicle->manufacturing_model }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Placa: {{ $vehicle->license_plate }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $vehicle->created_at->format('M d, Y') }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $vehicle->created_at->format('d/m/Y H:i') }}</div>
                             <div class="flex gap-3">
                                 <a
                                     href="{{ route('vehicles.edit', $vehicle->id) }}"

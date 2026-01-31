@@ -119,7 +119,7 @@ new class extends Component
                                         {{ $driver->document_formatted }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $driver->created_at->format('M d, Y') }}
+                                        {{ $driver->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a
@@ -150,7 +150,7 @@ new class extends Component
                         <div class="p-4">
                             <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $driver->name }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Documento: {{ $driver->document }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $driver->created_at->format('M d, Y') }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $driver->created_at->format('d/m/Y H:i') }}</div>
                             <div class="flex gap-3">
                                 <a
                                     href="{{ route('drivers.edit', $driver->id) }}"
