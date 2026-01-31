@@ -35,13 +35,18 @@ new class extends Component
 
     public function getVehiclesProperty()
     {
-        $query = Vehicle::latest();
+        $query = Vehicle::with('vehicleModel.vehicleBrand')->latest();
 
         if ($this->search !== '') {
             $term = trim($this->search);
             $query->where(function ($q) use ($term) {
-                $q->where('name', 'like', "%{$term}%")
-                    ->orWhere('license_plate', 'like', "%{$term}%");
+                $q->where('license_plate', 'like', "%{$term}%")
+                    ->orWhereHas('vehicleModel', function ($q) use ($term) {
+                        $q->where('title', 'like', "%{$term}%")
+                            ->orWhereHas('vehicleBrand', function ($q) use ($term) {
+                                $q->where('title', 'like', "%{$term}%");
+                            });
+                    });
             });
         }
 
@@ -83,12 +88,12 @@ new class extends Component
             <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Veículos</h1>
                 <div class="w-full sm:w-auto">
-                    <label for="filterSearch" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Nome ou placa</label>
+                    <label for="filterSearch" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Modelo, marca ou placa</label>
                     <input
                         id="filterSearch"
                         type="text"
                         wire:model.live.debounce.300ms="search"
-                        placeholder="Buscar por nome ou placa..."
+                        placeholder="Buscar por modelo, marca ou placa..."
                         class="w-full sm:w-56 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
@@ -100,7 +105,7 @@ new class extends Component
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nome</th>
+                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Modelo</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fabricação/Modelo</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Placa</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Criado</th>
@@ -114,7 +119,7 @@ new class extends Component
                                         {{ $vehicle->id }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $vehicle->name }}
+                                        {{ $vehicle->display_name }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $vehicle->manufacturing_model }}
@@ -152,7 +157,7 @@ new class extends Component
                 <div class="sm:hidden divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($this->vehicles as $vehicle)
                         <div class="p-4">
-                            <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $vehicle->name }}</div>
+                            <div class="font-medium text-gray-900 dark:text-gray-100 mb-2">{{ $vehicle->display_name }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Fabricação/Modelo: {{ $vehicle->manufacturing_model }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Placa: {{ $vehicle->license_plate }}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $vehicle->created_at->format('M d, Y') }}</div>

@@ -146,14 +146,14 @@ new class extends Component
 
     public function selectVehicle($vehicleId)
     {
-        $vehicle = Vehicle::findOrFail($vehicleId);
+        $vehicle = Vehicle::with('vehicleModel.vehicleBrand')->findOrFail($vehicleId);
         $this->selectedVehicleId = $vehicleId;
-        $this->vehicle = $vehicle->name;
+        $this->vehicle = $vehicle->display_name;
         $this->manufacturingModel = $vehicle->manufacturing_model;
         $this->licensePlate = $vehicle->license_plate;
         $this->chassis = $vehicle->chassis;
         $this->renavam = $vehicle->renavam;
-        $this->vehicleSearch = $vehicle->name;
+        $this->vehicleSearch = $vehicle->display_name;
     }
 
     public function getVehiclesProperty()
@@ -162,8 +162,15 @@ new class extends Component
             return collect();
         }
 
-        return Vehicle::where('name', 'like', '%' . $this->vehicleSearch . '%')
-            ->orWhere('license_plate', 'like', '%' . $this->vehicleSearch . '%')
+        $term = '%' . $this->vehicleSearch . '%';
+        return Vehicle::with('vehicleModel.vehicleBrand')
+            ->where('license_plate', 'like', $term)
+            ->orWhereHas('vehicleModel', function ($q) use ($term) {
+                $q->where('title', 'like', $term)
+                    ->orWhereHas('vehicleBrand', function ($q) use ($term) {
+                        $q->where('title', 'like', $term);
+                    });
+            })
             ->limit(10)
             ->get();
     }
@@ -553,7 +560,7 @@ new class extends Component
                                             x-on:click="open = false"
                                             class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100"
                                         >
-                                            <div class="font-medium">{{ $vehicle->name }}</div>
+                                            <div class="font-medium">{{ $vehicle->display_name }}</div>
                                             <div class="text-sm text-gray-500 dark:text-gray-400">{{ $vehicle->license_plate }}</div>
                                         </button>
                                     @endforeach
