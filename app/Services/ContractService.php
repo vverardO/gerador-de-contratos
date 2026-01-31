@@ -6,6 +6,7 @@ use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -36,12 +37,26 @@ class ContractService
             'data_hoje' => $contract->today_date,
         ];
 
+        Carbon::setLocale('pt_BR');
+
+        $carbonStartDate = Carbon::parse($contract->start_date);
+        $carbonEndDate = Carbon::parse($contract->end_date);
+        $carbonTodayDate = Carbon::now();
+
+        if ($contract->today_date) {
+            $carbonTodayDate = Carbon::parse($contract->today_date);
+        }
+
+        $startDateString = $carbonStartDate->translatedFormat('d').' de '.$carbonStartDate->translatedFormat('F').' de '.$carbonStartDate->translatedFormat('Y');
+        $endDateString = $carbonEndDate->translatedFormat('d').' de '.$carbonEndDate->translatedFormat('F').' de '.$carbonEndDate->translatedFormat('Y');
+        $todayDateString = $carbonTodayDate->translatedFormat('d').' de '.$carbonTodayDate->translatedFormat('F').' de '.$carbonTodayDate->translatedFormat('Y');
+
         if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
             $templateData['valor_total'] = $contract->value_formatted;
             $templateData['valor_total_extenso'] = $contract->value_in_words;
             $templateData['quantidade_dias'] = $contract->quantity_days ?? 30;
-            $templateData['data_inicio'] = $contract->start_date ?? $contract->today_date;
-            $templateData['data_fim'] = $contract->end_date ?? $contract->today_date;
+            $templateData['data_inicio'] = $startDateString ?? $todayDateString;
+            $templateData['data_fim'] = $endDateString ?? $todayDateString;
         }
 
         $templateName = match ($contract->type) {

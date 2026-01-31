@@ -88,38 +88,30 @@
 </head>
 <body>
     <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
-
     <div class="section">
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 54.379.584/0001-87, com sede na Av. Liberdade, nº 207B, Bairro Passo da Areia, CEP 97010-270.</p>
     </div>
-
     <div class="section">
         <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, CPF {{ $motorista_documento }}, residente e domiciliado à {{ $motorista_rua }}, nº {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, CEP {{ $motorista_cep }}.</p>
     </div>
-
     <div class="section">
         <p><span class="bold underline">VEÍCULO</span>: O presente contrato tem como objeto único e exclusivo a locação do automóvel com as seguintes informações: {{ $veiculo }}, ano de fabricação/modelo {{ $fabricacao_modelo }}, placa {{ $placa }}, chassi {{ $chassi }}, RENAVAM {{ $renavam }}.</p>
     </div>
-
     <div class="section">
         <p><span class="bold underline">PROPRIETÁRIO DO VEÍCULO</span>: {{ $proprietario_nome }}, CPF/CNPJ {{ $proprietario_documento }}.</p>
     </div>
-
     <div class="section">
         <p><span class="bold underline">PRAZO DO CONTRATO</span>: {{ $quantidade_dias }} dias.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 1ª – DO OBJETO DO CONTRATO</p>
         <p>O presente contrato tem como objeto a locação do veículo acima caracterizado, pelo período determinado, mediante remuneração total de R$ {{ $valor_total }} ({{ $valor_total_extenso }}), referente à locação pelo prazo de {{ $quantidade_dias }} dias, compreendidos entre {{ $data_inicio }} e {{ $data_fim }}.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 2ª – DO PRAZO</p>
         <p>O presente contrato vigorará pelo prazo determinado de {{ $quantidade_dias }} dias, com início em {{ $data_inicio }} e término em {{ $data_fim }}, data em que o veículo deverá ser devolvido ao LOCADOR, nas condições previstas neste contrato.</p>
         <p class="paragraph">Parágrafo único. Findo o prazo estipulado, a permanência do veículo em posse do LOCATÁRIO somente será permitida mediante anuência expressa do LOCADOR, podendo ser cobrado valor adicional conforme tabela vigente.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 3ª – DO USO DO VEÍCULO</p>
         <p>O veículo objeto deste contrato será utilizado exclusivamente pelo LOCATÁRIO, para uso particular, sendo vedada sua utilização para fins comerciais, transporte remunerado de passageiros, aplicativos, sublocação ou qualquer finalidade diversa da informada no momento da contratação.</p>
@@ -128,13 +120,11 @@
         <p class="paragraph"><strong>§3º</strong> O LOCATÁRIO declara que o destino e o percurso da viagem foram previamente informados e acordados com a LOCADORA, comprometendo-se a não ultrapassar o destino autorizado sem prévia e expressa autorização formal.</p>
         <p class="paragraph"><strong>§4º</strong> O descumprimento do destino previamente acordado, a saída do veículo para localidade diversa sem autorização ou qualquer infração às disposições desta cláusula caracterizam infração grave e quebra contratual, autorizando a LOCADORA a proceder com o bloqueio preventivo do veículo por meio do sistema de rastreamento, independentemente de aviso prévio, bem como à rescisão imediata do contrato, perda integral da caução e aplicação de multa equivalente a 4 (quatro) vezes o valor da diária contratada.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 4ª – DO VALOR</p>
         <p>A título de contraprestação pela locação do veículo, o LOCATÁRIO pagará ao LOCADOR o valor total de R$ {{ $valor_total }} ({{ $valor_total_extenso }}), correspondente ao período de locação previamente contratado, conforme disposto nas Cláusulas 1ª e 2ª deste contrato.</p>
         <p class="paragraph">Parágrafo único. O valor ora ajustado refere-se à locação pelo período determinado, não havendo cobrança de diária durante a vigência do prazo contratado, salvo nas hipóteses de prorrogação, atraso na devolução ou infração contratual.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 5ª – DO PAGAMENTO, DA PRORROGAÇÃO E DA INADIMPLÊNCIA</p>
         <p>O pagamento do valor total da locação deverá ser realizado integralmente no ato da retirada do veículo, por meio de PIX, transferência bancária ou outro meio previamente autorizado pela LOCADORA, valendo o comprovante como quitação da obrigação.</p>
@@ -145,7 +135,6 @@
         <p class="paragraph"><strong>§5º</strong> O LOCATÁRIO declara estar ciente e de pleno acordo que o bloqueio remoto e a retomada do veículo constituem medidas legítimas de proteção patrimonial da LOCADORA, não configurando abuso de direito, enquanto perdurar a situação de inadimplência ou infração contratual.</p>
         <p class="paragraph"><strong>§6º</strong> Persistindo a inadimplência e a retenção indevida do veículo, tal conduta poderá caracterizar apropriação indevida, nos termos do artigo 168 do Código Penal Brasileiro, sem prejuízo das sanções civis e contratuais previstas neste instrumento.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 6ª – DA GARANTIA E DO FUNDO DO LOCATÁRIO</p>
         <p>Como garantia do presente contrato, o LOCATÁRIO pagou a quantia de R$ 500,00 (quinhentos reais), equivalente a parte do valor da franquia do seguro do veículo objeto deste instrumento.</p>
@@ -153,7 +142,6 @@
         <p class="paragraph"><strong>§2º</strong> A caução será devolvida em até 30 (trinta) dias úteis após o término da locação, descontados eventuais valores devidos a título de aluguel, multas ou avarias.</p>
         <p class="paragraph"><strong>§3º</strong> Caso o LOCATÁRIO devolva o veículo antes do prazo inicialmente contratado, o valor acumulado da caução não será devolvido, a título de quebra contratual.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 7ª – DAS CONDIÇÕES DO VEÍCULO</p>
         <p>O LOCATÁRIO reconhece que vistoriou o veículo e que deverá devolvê-lo à LOCADORA nas mesmas condições em que o recebeu, ou seja, em perfeito estado de uso, com detalhes incluídos na FICHA DE VISTORIA e/ou fotografias, que farão parte integrante do presente instrumento, sem quaisquer avarias, respondendo pelos danos ou prejuízos causados, podendo a LOCADORA submetê-lo a exames por mecânico de sua confiança. O LOCATÁRIO assume responsabilidade por danos ou prejuízos que vier a causar.</p>
@@ -163,7 +151,6 @@
         <p class="paragraph"><strong>§ 4º</strong> Os valores constantes nos §§ 1º e 2º da presente cláusula serão descontados da caução no momento da devolução do veículo.</p>
         <p class="paragraph"><strong>§ 5º</strong> O LOCATÁRIO poderá solicitar a troca do veículo durante a vigência do contrato, mediante o pagamento de taxa única no valor de R$ 100,00 (cem reais). A troca estará condicionada à disponibilidade da frota da LOCADORA e será formalizada mediante novo contrato.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 8ª – DAS RESPONSABILIDADES</p>
         <p>O LOCATÁRIO assume exclusivamente a responsabilidade civil, criminal e administrativa por todos os fatos ou danos que vierem a ocorrer com o veículo locado durante a vigência da locação, responsabilizando-se integralmente pelo pagamento de multas, pontuação e demais encargos decorrentes de infrações de trânsito cometidas no período da locação, inclusive taxas cartorárias e de correio.</p>
@@ -176,7 +163,6 @@
         <p class="paragraph"><strong>§ 7º</strong> Quando o veículo permanecer indisponível por manutenção não provocada pelo LOCATÁRIO, este poderá optar pelo desconto proporcional da fração do dia em que o veículo não foi utilizado ou pela utilização de outro veículo de categoria similar, se disponível.</p>
         <p class="paragraph"><strong>§ 8º</strong> A devolução da caução ocorrerá somente após o prazo de 30 (trinta) dias úteis, a fim de resguardar a LOCADORA quanto a multas ou prejuízos supervenientes.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 9ª – DO SEGURO</p>
         <p>Os valores a título de seguro contra furto, roubo e acidentes contratados para o veículo serão suportados pelo LOCADOR. Em caso de acionamento do seguro do veículo, por incidente ocorrido durante a vigência do presente instrumento, será de responsabilidade do LOCATÁRIO o pagamento da franquia, cujo custo é 8% do valor do veículo na Tabela FIPE.</p>
@@ -184,7 +170,6 @@
         <p class="paragraph"><strong>§ 2°:</strong> Os impostos e encargos incidentes sobre o veículo, como IPVA, seguro DPVAT e licenciamento anual são de responsabilidade da LOCADORA, não repassados ao LOCATÁRIO.</p>
         <p class="paragraph"><strong>§ 3°:</strong> Em caso do bem, objeto deste contrato, sofrer sinistro ou qualquer prejuízo material, incorrerá em rescisão contratual.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 10ª – DA RESCISÃO</p>
         <p>Se qualquer das partes não convier a continuidade da locação, notificará a outra parte sua intenção de rescindir o contrato com 07 (sete) dias de antecedência em que o contrato continuará em vigência.</p>
@@ -192,18 +177,15 @@
         <p class="paragraph"><strong>§ 2°:</strong> A rescisão antecipada não isentará o LOCATÁRIO da responsabilidade pelo pagamento dos débitos decorrentes das obrigações contratuais até a data da efetiva devolução à LOCADORA com prazo descrito na CLÁUSULA 5ª, nem das indenizações eventualmente devidas, mesmo que apurados após a referida rescisão.</p>
         <p class="paragraph"><strong>§ 3°:</strong> O descumprimento de qualquer cláusula contratual implicará resolução do contrato, independentemente de comunicação, sem prejuízo de multas e ou reparação de danos sofridos.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 11ª</p>
         <p>Em caso de inadimplemento de quaisquer das cláusulas do presente instrumento, incidirá multa de 20% (vinte por cento) sobre o valor devido, além de juros de 10% (dez por cento) ao mês e correção monetária pelo índice IGPM/FGV, sem prejuízo da multa estabelecida em cada uma delas.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 12ª</p>
         <p>As partes elegem o Foro da Comarca de Santa Maria - RS para qualquer demanda a respeito do contrato.</p>
         <p>As partes assinam este instrumento após lido e estando de acordo, com as testemunhas abaixo.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 13ª – DO TRATAMENTO DE DADOS PESSOAIS E PROTEÇÃO DE DADOS (LGPD)</p>
         <p>As partes reconhecem que o presente contrato envolve o tratamento de dados pessoais do LOCATÁRIO, nos termos da Lei nº 13.709/2018 (Lei Geral de Proteção de Dados – LGPD), comprometendo-se a cumprir integralmente a legislação aplicável.</p>
@@ -215,7 +197,6 @@
         <p class="paragraph"><strong>§ 6º</strong> Os dados poderão ser mantidos pelo prazo legal necessário, inclusive após o término do contrato.</p>
         <p class="paragraph"><strong>§ 7º</strong> Em caso de incidente de segurança, a LOCADORA adotará as medidas cabíveis, conforme a legislação vigente.</p>
     </div>
-
     <div class="clause">
         <p class="clause-title">CLÁUSULA 14ª – DA REMOÇÃO DA TAG DA CHAVE</p>
         <p>O LOCATÁRIO compromete-se a não remover a TAG DE IDENTIFICAÇÃO DA CHAVE do veículo locado. A remoção da tag implicará a aplicação de multa no valor de R$ 20,00 (vinte reais), a ser cobrada no momento da devolução do veículo ou descontada da caução.</p>
@@ -223,11 +204,9 @@
         <p class="paragraph"><strong>§ 2º</strong> A remoção da tag pode gerar dificuldades administrativas e de rastreabilidade da chave.</p>
         <p class="paragraph"><strong>§ 3º</strong> A devolução da chave sem a tag será considerada descumprimento contratual, sujeitando o LOCATÁRIO à multa prevista.</p>
     </div>
-
     <div class="location-date">
         <p>Santa Maria, {{ $data_hoje }}.</p>
     </div>
-
     <div class="signatures">
         <div class="signature-row">
             <div class="signature-block">
@@ -245,7 +224,6 @@
                 </div>
             </div>
         </div>
-
         <div class="witnesses">
             <p><strong>TESTEMUNHAS</strong></p>
             <div class="signature-row">

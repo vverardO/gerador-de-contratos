@@ -47,7 +47,7 @@ new class extends Component
         try {
             $contract = Contract::findOrFail($id);
             $contractService = app(ContractService::class);
-            $contractService->generatePdf($contract);
+            $contractService->generatePdfAndSendToZapSign($contract);
 
             $contract->status = ContractStatus::SENT;
             $contract->save();
@@ -140,12 +140,12 @@ new class extends Component
                         </select>
                     </div>
                     <div class="w-full sm:w-auto">
-                        <label for="filterSearch" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Motorista ou veículo</label>
+                        <label for="filterSearch" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">motorista ou veículo</label>
                         <input
                             id="filterSearch"
                             type="text"
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Buscar por nome ou veículo..."
+                            placeholder="nome ou veículo..."
                             class="w-full sm:w-56 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                         />
                     </div>
@@ -215,15 +215,6 @@ new class extends Component
                                         >
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        @if($contract->status->value == 'draft')
-                                        <button
-                                            wire:click="generatePdf({{ $contract->id }})"
-                                            class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
-                                            title="Gerar PDF"
-                                        >
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                        @endif
                                         @if($contract->status->value == 'sent')
                                         <button
                                             wire:click="markAsSigned({{ $contract->id }})"

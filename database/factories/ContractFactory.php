@@ -45,27 +45,20 @@ class ContractFactory extends Factory
             'Vila Esperança',
         ];
 
-        $months = [
-            'janeiro',
-            'fevereiro',
-            'março',
-            'abril',
-            'maio',
-            'junho',
-            'julho',
-            'agosto',
-            'setembro',
-            'outubro',
-            'novembro',
-            'dezembro',
-        ];
+        $type = fake()->randomElement([ContractType::OCCASIONAL_RENTAL, ContractType::APP_RENTAL]);
 
-        $day = fake()->numberBetween(1, 28);
-        $month = fake()->randomElement($months);
-        $currentYear = date('Y');
+        if ($type === ContractType::OCCASIONAL_RENTAL) {
+            $quantityDays = fake()->numberBetween(7, 30);
+            $startDate = fake()->dateTimeBetween('-1 year', 'now');
+            $endDate = fake()->dateTimeBetween('+1 week', '+1 month');
+        } else {
+            $quantityDays = null;
+            $startDate = null;
+            $endDate = null;
+        }
 
         return [
-            'type' => fake()->randomElement([ContractType::OCCASIONAL_RENTAL, ContractType::APP_RENTAL]),
+            'type' => $type,
             'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::SENT, ContractStatus::SIGNED]),
             'driver_name' => fake()->name(),
             'driver_document' => fake()->numerify('###.###.###-##'),
@@ -81,10 +74,10 @@ class ContractFactory extends Factory
             'owner_name' => fake()->company(),
             'owner_document' => fake()->numerify('##.###.###/####-##'),
             'value' => $valueCents,
-            'today_date' => "{$day} de {$month} de {$currentYear}",
-            'quantity_days' => null,
-            'start_date' => null,
-            'end_date' => null,
+            'today_date' => fake()->dateTimeBetween('-1 year', 'now'),
+            'quantity_days' => $quantityDays,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
         ];
     }
 

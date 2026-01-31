@@ -19,11 +19,17 @@ class Vehicle extends Model
         'chassis',
         'renavam',
         'vehicle_model_id',
+        'vehicle_owner_id',
     ];
 
     public function vehicleModel(): BelongsTo
     {
         return $this->belongsTo(VehicleModel::class);
+    }
+
+    public function vehicleOwner(): BelongsTo
+    {
+        return $this->belongsTo(VehicleOwner::class);
     }
 
     protected function displayName(): Attribute
