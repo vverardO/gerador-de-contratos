@@ -81,7 +81,7 @@ class Contract extends Model
         return Attribute::make(
             get: function () {
                 if ($this->type === ContractType::OCCASIONAL_RENTAL) {
-                    return $this->start_date <= now()->format('Y-m-d') && $this->end_date >= now()->format('Y-m-d');
+                    return $this->start_date <= now()->format('Y-m-d H:i:s') && $this->end_date >= now()->format('Y-m-d H:i:s');
                 }
 
                 return $this->status === ContractStatus::ON_GOING;

@@ -68,7 +68,7 @@ new class extends Component
         $contract->status = ContractStatus::DONE;
 
         if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
-            $contract->end_date = now()->format('Y-m-d');
+            $contract->end_date = now()->format('Y-m-d H:i:s');
         }
 
         $contract->save();
@@ -225,8 +225,7 @@ new class extends Component
                                         >
                                             <i class="fas fa-pencil"></i>
                                         </a>
-                                        @endif
-                                        @if($contract->is_on_going)
+                                        @elseif($contract->is_on_going)
                                         <button
                                             wire:click="markAsDone({{ $contract->id }})"
                                             wire:confirm="Tem certeza que deseja encerrar este contrato?"
