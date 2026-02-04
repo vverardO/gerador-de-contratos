@@ -80,13 +80,13 @@ new class extends Component
         return $query->paginate(7);
     }
 
-    public function markAsSigned($id)
+    public function markAsFinished($id)
     {
         $contract = Contract::findOrFail($id);
-        $contract->status = ContractStatus::SIGNED;
+        $contract->status = ContractStatus::FINISHED;
         $contract->save();
 
-        $this->dispatch('toast', message: 'Contrato assinado com sucesso', type: 'success');
+        $this->dispatch('toast', message: 'Contrato finalizado com sucesso', type: 'success');
     }
 }
 ?>
@@ -156,8 +156,7 @@ new class extends Component
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motorista</th>
-                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Veículo</th>
+                                <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Informações</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
                                 <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
@@ -172,10 +171,7 @@ new class extends Component
                                         {{ $contract->id }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $contract->driver_name }}
-                                    </td>
-                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $contract->vehicle }}
+                                        {{ $contract->vehicle }} - {{ $contract->driver_name }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         R$ {{ $contract->value_formatted }}
@@ -187,13 +183,11 @@ new class extends Component
                                         @php
                                             $statusColors = [
                                                 'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                                'signed' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-                                                'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                                                'finished' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                                             ];
                                             $statusLabels = [
                                                 'draft' => 'Rascunho',
-                                                'signed' => 'Assinado',
-                                                'sent' => 'Enviado',
+                                                'finished' => 'Finalizado',
                                             ];
                                             $status = $contract->status?->value ?? 'draft';
                                         @endphp
@@ -213,25 +207,15 @@ new class extends Component
                                         >
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        @if($contract->status->value == 'sent')
+                                        @if($contract->status->value == 'draft')
                                         <button
-                                            wire:click="markAsSigned({{ $contract->id }})"
-                                            wire:confirm="Tem certeza que deseja enviar este contrato?"
+                                            wire:click="markAsFinished({{ $contract->id }})"
+                                            wire:confirm="Tem certeza que deseja finalizar este contrato?"
                                             class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
-                                            title="Assinar Contrato"
+                                            title="Finalizar Contrato"
                                         >
                                             <i class="fas fa-check"></i>
                                         </button>
-                                        @endif
-                                        @if($contract->status->value == 'draft')
-                                        <button
-                                            wire:click="generatePdf({{ $contract->id }})"
-                                            class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
-                                            title="Gerar PDF"
-                                        >
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                        @endif
                                         <a
                                             href="{{ route('contracts.edit', $contract->id) }}"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
@@ -240,6 +224,7 @@ new class extends Component
                                         >
                                             <i class="fas fa-pencil"></i>
                                         </a>
+                                        @endif
                                         <button
                                             wire:click="delete({{ $contract->id }})"
                                             wire:confirm="Tem certeza que deseja excluir este contrato?"
@@ -266,13 +251,11 @@ new class extends Component
                                 @php
                                     $statusColors = [
                                         'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                        'sent' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-                                        'signed' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                        'finished' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
                                     ];
                                     $statusLabels = [
                                         'draft' => 'Rascunho',
-                                        'signed' => 'Assinado',
-                                        'sent' => 'Enviado',
+                                        'finished' => 'Finalizado',
                                     ];
                                     $status = $contract->status?->value ?? 'draft';
                                 @endphp
@@ -292,31 +275,22 @@ new class extends Component
                                 </a>
                                 @if($contract->status->value == 'draft')
                                     <button
-                                        wire:click="generatePdf({{ $contract->id }})"
-                                        class="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 mr-4"
-                                        title="Gerar PDF"
-                                    >
-                                        <i class="fas fa-file-pdf"></i>
-                                    </button>
-                                @endif
-                                @if($contract->status->value == 'sent')
-                                    <button
-                                        wire:click="markAsSigned({{ $contract->id }})"
-                                        wire:confirm="Tem certeza que deseja marcar como assinado este contrato?"
+                                        wire:click="markAsFinished({{ $contract->id }})"
+                                        wire:confirm="Tem certeza que deseja marcar como finalizado este contrato?"
                                         class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
-                                        title="Assinar Contrato"
+                                        title="Finalizar Contrato"
                                     >
                                         <i class="fas fa-check"></i>
                                     </button>
+                                    <a
+                                        href="{{ route('contracts.edit', $contract->id) }}"
+                                        class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                        wire:navigate
+                                        title="Editar"
+                                    >
+                                        <i class="fas fa-pencil"></i>
+                                    </a>
                                 @endif
-                                <a
-                                    href="{{ route('contracts.edit', $contract->id) }}"
-                                    class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                                    wire:navigate
-                                    title="Editar"
-                                >
-                                    <i class="fas fa-pencil"></i>
-                                </a>
                                 <button
                                     wire:click="delete({{ $contract->id }})"
                                     wire:confirm="Tem certeza que deseja excluir este contrato?"

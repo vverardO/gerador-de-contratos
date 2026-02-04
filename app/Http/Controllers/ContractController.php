@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContractStatus;
 use App\Models\Contract;
 use App\Services\ContractService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ContractController extends Controller
 {
@@ -40,9 +42,27 @@ class ContractController extends Controller
             $bodyContent = $html;
         }
 
+        $showDownloadButton = $contract->status != ContractStatus::FINISHED;
+
         return view('contracts.show', [
             'content' => $bodyContent,
             'styles' => $styles,
+            'contractId' => $id,
+            'showDownloadButton' => $showDownloadButton,
         ]);
+    }
+
+    public function downloadPdf($id)
+    {
+        $contract = Contract::findOrFail($id);
+        $html = $this->contractService->getContractHtml($contract);
+
+        $pdf = Pdf::loadHTML($html);
+
+        $driverName = strtoupper(preg_replace('/[^A-Z0-9]/i', '-', $contract->driver_name));
+
+        $filename = 'CONTRATO-'.$contract->id.'-'.$driverName.'-'.strtoupper($contract->license_plate).'.pdf';
+
+        return $pdf->download($filename);
     }
 }

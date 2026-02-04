@@ -10,8 +10,8 @@ enum ContractType: string
     public function label(): string
     {
         return match ($this) {
-            self::OCCASIONAL_RENTAL => 'Locação Ocasional',
-            self::APP_RENTAL => 'Locação por App',
+            self::OCCASIONAL_RENTAL => 'Ocasional',
+            self::APP_RENTAL => 'Aplicativo',
         };
     }
 }

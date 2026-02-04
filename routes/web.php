@@ -46,4 +46,5 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');
 
     Route::get('/contratos/{id}/visualizar', [ContractController::class, 'show'])->name('contracts.show');
+    Route::get('/contratos/{id}/pdf', [ContractController::class, 'downloadPdf'])->name('contracts.downloadPdf');
 });

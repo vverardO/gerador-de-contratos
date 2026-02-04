@@ -251,6 +251,16 @@ new class extends Component
             ->get();
     }
 
+    public function getContractTypesProperty()
+    {
+        return collect(ContractType::cases())->map(function ($type) {
+            return [
+                'value' => $type->value,
+                'label' => $type->label(),
+            ];
+        });
+    }
+
     public function getVehiclesProperty()
     {
         if (strlen($this->vehicleSearch) < 2) {
@@ -533,8 +543,10 @@ new class extends Component
                             wire:model.live="type"
                             class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         >
-                            <option value="occasional_rental">Locação Ocasional</option>
-                            <option value="app_rental">Locação por App</option>
+                            <option value="">Selecione o tipo de contrato</option>
+                            @foreach($this->contractTypes as $contractType)
+                                <option value="{{ $contractType['value'] }}">{{ $contractType['label'] }}</option>
+                            @endforeach
                         </select>
                         @error('type')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
