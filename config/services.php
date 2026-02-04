@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'sempreju' => [
+        'endpoint' => env('SEMPREJU_ENDPOINT', 'https://gerador-teste.free.beeceptor.com'),
+        'token_url' => env('SEMPREJU_TOKEN_URL', 'https://contract.beeceptor.com.br/tokens'),
+        'api_key' => env('SEMPREJU_API_KEY'),
+        'token_type' => env('SEMPREJU_TOKEN_TYPE', 'driver'),
+    ],
+
 ];
