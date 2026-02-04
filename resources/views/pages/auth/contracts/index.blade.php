@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ContractStatus;
+use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Services\ContractService;
 use Illuminate\Support\Facades\Auth;
@@ -42,25 +43,6 @@ new class extends Component
         $this->dispatch('toast', message: 'Contrato deletado com sucesso', type: 'success');
     }
 
-    public function generatePdf($id)
-    {
-        $this->dispatch('toast', message: 'Ainda to implementando', type: 'error');
-        return;
-
-        try {
-            $contract = Contract::findOrFail($id);
-            $contractService = app(ContractService::class);
-            $contractService->generatePdfAndSendToZapSign($contract);
-
-            $contract->status = ContractStatus::SENT;
-            $contract->save();
-
-            $this->dispatch('toast', message: 'PDF gerado e enviado com sucesso!', type: 'success');
-        } catch (Exception $e) {
-            $this->dispatch('toast', message: $e->getMessage(), type: 'error');
-        }
-    }
-
     public function getContractsProperty()
     {
         $query = Contract::latest();
@@ -80,13 +62,36 @@ new class extends Component
         return $query->paginate(7);
     }
 
-    public function markAsFinished($id)
+    public function markAsDone($id)
     {
         $contract = Contract::findOrFail($id);
-        $contract->status = ContractStatus::FINISHED;
+        $contract->status = ContractStatus::DONE;
+
+        if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
+            $contract->end_date = now()->format('Y-m-d');
+        }
+
         $contract->save();
 
-        $this->dispatch('toast', message: 'Contrato finalizado com sucesso', type: 'success');
+        $this->dispatch('toast', message: 'Contrato encerrado com sucesso', type: 'success');
+    }
+
+    public function markAsCancelled($id)
+    {
+        $contract = Contract::findOrFail($id);
+        $contract->status = ContractStatus::CANCELLED;
+        $contract->save();
+
+        $this->dispatch('toast', message: 'Contrato cancelado com sucesso', type: 'success');
+    }
+
+    public function markAsOnGoing($id)
+    {
+        $contract = Contract::findOrFail($id);
+        $contract->status = ContractStatus::ON_GOING;
+        $contract->save();
+
+        $this->dispatch('toast', message: 'Contrato em andamento', type: 'success');
     }
 }
 ?>
@@ -183,11 +188,15 @@ new class extends Component
                                         @php
                                             $statusColors = [
                                                 'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                                'finished' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                                'done' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                                'cancelled' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                                                'on_going' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                                             ];
                                             $statusLabels = [
                                                 'draft' => 'Rascunho',
-                                                'finished' => 'Finalizado',
+                                                'done' => 'Encerrado',
+                                                'cancelled' => 'Cancelado',
+                                                'on_going' => 'Em andamento',
                                             ];
                                             $status = $contract->status?->value ?? 'draft';
                                         @endphp
@@ -199,22 +208,14 @@ new class extends Component
                                         {{ $contract->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a
-                                            href="{{ route('contracts.show', $contract->id) }}"
-                                            target="_blank"
-                                            class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
-                                            title="Visualizar"
-                                        >
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        @if($contract->status->value == 'draft')
+                                        @if($contract->is_draft)
                                         <button
-                                            wire:click="markAsFinished({{ $contract->id }})"
-                                            wire:confirm="Tem certeza que deseja finalizar este contrato?"
+                                            wire:click="markAsOnGoing({{ $contract->id }})"
+                                            wire:confirm="Tem certeza que deseja marcar como em andamento este contrato?"
                                             class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
-                                            title="Finalizar Contrato"
+                                            title="Marcar como em andamento"
                                         >
-                                            <i class="fas fa-check"></i>
+                                            <i class="fas fa-play"></i>
                                         </button>
                                         <a
                                             href="{{ route('contracts.edit', $contract->id) }}"
@@ -225,6 +226,32 @@ new class extends Component
                                             <i class="fas fa-pencil"></i>
                                         </a>
                                         @endif
+                                        @if($contract->is_on_going)
+                                        <button
+                                            wire:click="markAsDone({{ $contract->id }})"
+                                            wire:confirm="Tem certeza que deseja encerrar este contrato?"
+                                            class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                            title="Encerrar Contrato"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button
+                                            wire:click="markAsCancelled({{ $contract->id }})"
+                                            wire:confirm="Tem certeza que deseja cancelar este contrato?"
+                                            class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 mr-4"
+                                            title="Cancelar Contrato"
+                                        >
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                        @endif
+                                        <a
+                                            href="{{ route('contracts.show', $contract->id) }}"
+                                            target="_blank"
+                                            class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
+                                            title="Visualizar"
+                                        >
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         <button
                                             wire:click="delete({{ $contract->id }})"
                                             wire:confirm="Tem certeza que deseja excluir este contrato?"
@@ -251,11 +278,15 @@ new class extends Component
                                 @php
                                     $statusColors = [
                                         'draft' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-                                        'finished' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                        'done' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                        'cancelled' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                                        'on_going' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
                                     ];
                                     $statusLabels = [
                                         'draft' => 'Rascunho',
-                                        'finished' => 'Finalizado',
+                                        'done' => 'Encerrado',
+                                        'cancelled' => 'Cancelado',
+                                        'on_going' => 'Em andamento',
                                     ];
                                     $status = $contract->status?->value ?? 'draft';
                                 @endphp
@@ -265,6 +296,34 @@ new class extends Component
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">Criado: {{ $contract->created_at->format('d/m/Y H:i') }}</div>
                             <div class="flex gap-3">
+                                @if($contract->is_draft)
+                                <button
+                                    wire:click="markAsOnGoing({{ $contract->id }})"
+                                    wire:confirm="Tem certeza que deseja encerrar este contrato?"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                                    title="Marcar como em andamento"
+                                >
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <a
+                                    href="{{ route('contracts.edit', $contract->id) }}"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                    wire:navigate
+                                    title="Editar"
+                                >
+                                    <i class="fas fa-pencil"></i>
+                                </a>
+                                @endif
+                                @if($contract->is_on_going)
+                                <button
+                                    wire:click="markAsCancelled({{ $contract->id }})"
+                                    wire:confirm="Tem certeza que deseja cancelar este contrato?"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                                    title="Cancelar Contrato"
+                                >
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                @endif
                                 <a
                                     href="{{ route('contracts.show', $contract->id) }}"
                                     target="_blank"
@@ -273,24 +332,6 @@ new class extends Component
                                 >
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                @if($contract->status->value == 'draft')
-                                    <button
-                                        wire:click="markAsFinished({{ $contract->id }})"
-                                        wire:confirm="Tem certeza que deseja marcar como finalizado este contrato?"
-                                        class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 mr-4"
-                                        title="Finalizar Contrato"
-                                    >
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <a
-                                        href="{{ route('contracts.edit', $contract->id) }}"
-                                        class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                                        wire:navigate
-                                        title="Editar"
-                                    >
-                                        <i class="fas fa-pencil"></i>
-                                    </a>
-                                @endif
                                 <button
                                     wire:click="delete({{ $contract->id }})"
                                     wire:confirm="Tem certeza que deseja excluir este contrato?"

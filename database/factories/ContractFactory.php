@@ -7,16 +7,8 @@ use App\Enums\ContractType;
 use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contract>
- */
 class ContractFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $year = fake()->numberBetween(2020, 2024);
@@ -59,7 +51,7 @@ class ContractFactory extends Factory
 
         return [
             'type' => $type,
-            'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::FINISHED]),
+            'status' => fake()->randomElement(ContractStatus::cases()),
             'driver_name' => fake()->name(),
             'driver_document' => fake()->numerify('###.###.###-##'),
             'driver_street' => fake()->randomElement($streets),
@@ -79,30 +71,5 @@ class ContractFactory extends Factory
             'start_date' => $startDate,
             'end_date' => $endDate,
         ];
-    }
-
-    public function occasionalRental(): static
-    {
-        $day = fake()->numberBetween(1, 28);
-        $months = [
-            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-        ];
-        $monthStart = fake()->randomElement($months);
-        $currentYear = date('Y');
-        $quantityDays = fake()->numberBetween(7, 30);
-        $startDate = "{$day} de {$monthStart} de {$currentYear}";
-        $endDate = fake()->dateTimeBetween('+1 week', '+1 month');
-        $endDateFormatted = (int) $endDate->format('d').' de '.[
-            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-        ][(int) $endDate->format('n') - 1].' de '.$endDate->format('Y');
-
-        return $this->state(fn () => [
-            'type' => ContractType::OCCASIONAL_RENTAL,
-            'quantity_days' => $quantityDays,
-            'start_date' => $startDate,
-            'end_date' => $endDateFormatted,
-        ]);
     }
 }

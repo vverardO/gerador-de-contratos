@@ -75,4 +75,38 @@ class Contract extends Model
             return sprintf('%s reais com %s centavos', trim($reaisExtenso), trim($centavosExtenso));
         });
     }
+
+    protected function isOnGoing(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->type === ContractType::OCCASIONAL_RENTAL) {
+                    return $this->start_date <= now()->format('Y-m-d') && $this->end_date >= now()->format('Y-m-d');
+                }
+
+                return $this->status === ContractStatus::ON_GOING;
+            },
+        );
+    }
+
+    protected function isDone(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status === ContractStatus::DONE,
+        );
+    }
+
+    protected function isCancelled(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status === ContractStatus::CANCELLED,
+        );
+    }
+
+    protected function isDraft(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->status === ContractStatus::DRAFT,
+        );
+    }
 }

@@ -5,6 +5,7 @@ use App\Models\Contract;
 use App\Models\Driver;
 use App\Models\Vehicle;
 use App\Models\VehicleOwner;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -80,10 +81,10 @@ new class extends Component
         $this->ownerName = $this->contract->owner_name;
         $this->ownerDocument = $this->contract->owner_document;
         $this->value = $this->formatCentsToDisplay((int) $this->contract->value);
-        $this->todayDate = $this->contract->today_date;
-        $this->quantityDays = $this->contract->quantity_days !== null ? (string) $this->contract->quantity_days : null;
-        $this->startDate = $this->contract->start_date ?? '';
-        $this->endDate = $this->contract->end_date ?? '';
+        $this->todayDate = Carbon::parse($this->contract->today_date)->format('Y-m-d');
+        $this->quantityDays = $this->contract->quantity_days;
+        $this->startDate = Carbon::parse($this->contract->start_date)->format('Y-m-d');
+        $this->endDate = Carbon::parse($this->contract->end_date)->format('Y-m-d');
     }
 
     public function logout()
