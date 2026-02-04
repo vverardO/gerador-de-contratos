@@ -12,6 +12,22 @@ class VehicleOwnerSeeder extends Seeder
 
     public function run(): void
     {
-        VehicleOwner::factory(15)->create();
+        VehicleOwner::factory()
+            ->create([
+                'name' => 'Izicar Locacao de Veiculos',
+                'document' => '54379584000187',
+            ]);
+
+        VehicleOwner::factory()
+            ->create([
+                'name' => 'Valentim Verardo',
+                'document' => '02111245089',
+            ]);
+
+        VehicleOwner::factory()
+            ->create([
+                'name' => 'Sempreju Servicos de Tecnologia LTDA',
+                'document' => '62894552000148',
+            ]);
     }
 }

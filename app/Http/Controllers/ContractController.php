@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ContractStatus;
 use App\Models\Contract;
 use App\Services\ContractService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -42,13 +41,10 @@ class ContractController extends Controller
             $bodyContent = $html;
         }
 
-        $showDownloadButton = $contract->status != ContractStatus::FINISHED;
-
         return view('contracts.show', [
             'content' => $bodyContent,
             'styles' => $styles,
             'contractId' => $id,
-            'showDownloadButton' => $showDownloadButton,
         ]);
     }
 

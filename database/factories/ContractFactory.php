@@ -4,46 +4,18 @@ namespace Database\Factories;
 
 use App\Enums\ContractStatus;
 use App\Enums\ContractType;
+use App\Models\Driver;
 use App\Models\Vehicle;
+use App\Models\VehicleOwner;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contract>
- */
 class ContractFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $year = fake()->numberBetween(2020, 2024);
         $modelYear = $year + 1;
         $valueCents = fake()->numberBetween(5000, 500000);
-
-        $streets = [
-            'Rua das Flores',
-            'Avenida Principal',
-            'Rua Central',
-            'Avenida Liberdade',
-            'Rua do Comércio',
-            'Avenida Brasil',
-            'Rua São Paulo',
-            'Avenida dos Estados',
-        ];
-
-        $neighborhoods = [
-            'Centro',
-            'Passo da Areia',
-            'Nossa Senhora de Fátima',
-            'São João',
-            'Vila Nova',
-            'Jardim América',
-            'Bela Vista',
-            'Vila Esperança',
-        ];
 
         $type = fake()->randomElement([ContractType::OCCASIONAL_RENTAL, ContractType::APP_RENTAL]);
 
@@ -57,52 +29,31 @@ class ContractFactory extends Factory
             $endDate = null;
         }
 
+        $owner = VehicleOwner::inRandomOrder()->first();
+        $vehicle = Vehicle::inRandomOrder()->first();
+        $driver = Driver::inRandomOrder()->first();
+
         return [
             'type' => $type,
-            'status' => fake()->randomElement([ContractStatus::DRAFT, ContractStatus::FINISHED]),
-            'driver_name' => fake()->name(),
-            'driver_document' => fake()->numerify('###.###.###-##'),
-            'driver_street' => fake()->randomElement($streets),
-            'driver_number' => fake()->numberBetween(1, 9999),
-            'driver_neighborhood' => fake()->randomElement($neighborhoods),
-            'driver_zip_code' => fake()->numerify('#####-###'),
-            'vehicle' => Vehicle::inRandomOrder()->first()->display_name,
+            'status' => ContractStatus::DRAFT->value,
+            'driver_name' => $driver->name,
+            'driver_document' => $driver->document,
+            'driver_street' => $driver->address->street,
+            'driver_number' => $driver->address->number,
+            'driver_neighborhood' => $driver->address->neighborhood,
+            'driver_zip_code' => $driver->address->postal_code,
+            'vehicle' => $vehicle->display_name,
             'manufacturing_model' => "{$year}/{$modelYear}",
-            'license_plate' => fake()->regexify('[A-Z]{3}[0-9][A-Z][0-9]{2}'),
-            'chassis' => fake()->regexify('[A-Z0-9]{17}'),
-            'renavam' => fake()->numerify('###########'),
-            'owner_name' => fake()->company(),
-            'owner_document' => fake()->numerify('##.###.###/####-##'),
+            'license_plate' => $vehicle->license_plate,
+            'chassis' => $vehicle->chassis,
+            'renavam' => $vehicle->renavam,
+            'owner_name' => $owner->name,
+            'owner_document' => $owner->document,
             'value' => $valueCents,
             'today_date' => fake()->dateTimeBetween('-1 year', 'now'),
             'quantity_days' => $quantityDays,
             'start_date' => $startDate,
             'end_date' => $endDate,
         ];
-    }
-
-    public function occasionalRental(): static
-    {
-        $day = fake()->numberBetween(1, 28);
-        $months = [
-            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-        ];
-        $monthStart = fake()->randomElement($months);
-        $currentYear = date('Y');
-        $quantityDays = fake()->numberBetween(7, 30);
-        $startDate = "{$day} de {$monthStart} de {$currentYear}";
-        $endDate = fake()->dateTimeBetween('+1 week', '+1 month');
-        $endDateFormatted = (int) $endDate->format('d').' de '.[
-            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-        ][(int) $endDate->format('n') - 1].' de '.$endDate->format('Y');
-
-        return $this->state(fn () => [
-            'type' => ContractType::OCCASIONAL_RENTAL,
-            'quantity_days' => $quantityDays,
-            'start_date' => $startDate,
-            'end_date' => $endDateFormatted,
-        ]);
     }
 }
