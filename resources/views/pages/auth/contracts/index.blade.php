@@ -4,6 +4,7 @@ use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Services\ContractService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -15,6 +16,12 @@ new class extends Component
     public string $contractType = '';
 
     public string $search = '';
+
+    public bool $showExtendDaysModal = false;
+
+    public ?int $extendDaysContractId = null;
+
+    public int $extendDaysCount = 1;
 
     public function updatedContractType(): void
     {
@@ -33,6 +40,46 @@ new class extends Component
         session()->regenerateToken();
 
         return $this->redirect(route('login'), navigate: true);
+    }
+
+    public function openExtendDaysModal(int $contractId): void
+    {
+        $this->extendDaysContractId = $contractId;
+        $this->extendDaysCount = 1;
+        $this->showExtendDaysModal = true;
+    }
+
+    public function closeExtendDaysModal(): void
+    {
+        $this->showExtendDaysModal = false;
+        $this->extendDaysContractId = null;
+        $this->extendDaysCount = 1;
+    }
+
+    public function extendContractDays(): void
+    {
+        $this->validate([
+            'extendDaysCount' => 'required|integer|min:1',
+        ], [
+            'extendDaysCount.required' => 'A quantidade de dias é obrigatória',
+            'extendDaysCount.integer' => 'A quantidade de dias deve ser um número inteiro',
+            'extendDaysCount.min' => 'A quantidade de dias deve ser no mínimo 1 dia',
+        ]);
+
+        $contract = Contract::findOrFail($this->extendDaysContractId);
+
+        if ($contract->type !== ContractType::OCCASIONAL_RENTAL) {
+            $this->dispatch('toast', message: 'Apenas contratos eventuais podem ser estendidos', type: 'error');
+            return;
+        }
+
+        $currentEndDate = Carbon::parse($contract->end_date);
+        $contract->end_date = $currentEndDate->addDays($this->extendDaysCount)->format('Y-m-d H:i:s');
+        $contract->quantity_days = ($contract->quantity_days ?? 0) + $this->extendDaysCount;
+        $contract->save();
+
+        $this->closeExtendDaysModal();
+        $this->dispatch('toast', message: 'Contrato estendido com sucesso', type: 'success');
     }
 
     public function delete($id)
@@ -242,6 +289,15 @@ new class extends Component
                                         >
                                             <i class="fas fa-ban"></i>
                                         </button>
+                                        @if($contract->type === \App\Enums\ContractType::OCCASIONAL_RENTAL)
+                                        <button
+                                            wire:click="openExtendDaysModal({{ $contract->id }})"
+                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4"
+                                            title="Estender contrato"
+                                        >
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                        @endif
                                         @endif
                                         <a
                                             href="{{ route('contracts.show', $contract->id) }}"
@@ -315,6 +371,14 @@ new class extends Component
                                 @endif
                                 @if($contract->is_on_going)
                                 <button
+                                    wire:click="markAsDone({{ $contract->id }})"
+                                    wire:confirm="Tem certeza que deseja encerrar este contrato?"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                                    title="Encerrar Contrato"
+                                >
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button
                                     wire:click="markAsCancelled({{ $contract->id }})"
                                     wire:confirm="Tem certeza que deseja cancelar este contrato?"
                                     class="flex-1 text-center px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
@@ -322,6 +386,15 @@ new class extends Component
                                 >
                                     <i class="fas fa-ban"></i>
                                 </button>
+                                @if($contract->type === \App\Enums\ContractType::OCCASIONAL_RENTAL)
+                                <button
+                                    wire:click="openExtendDaysModal({{ $contract->id }})"
+                                    class="flex-1 text-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                    title="Estender contrato"
+                                >
+                                    <i class="fas fa-calendar-plus"></i>
+                                </button>
+                                @endif
                                 @endif
                                 <a
                                     href="{{ route('contracts.show', $contract->id) }}"
@@ -360,6 +433,49 @@ new class extends Component
                 </div>
             @endif
         </div>
+
+        @if($showExtendDaysModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-75 transition-opacity" wire:click="closeExtendDaysModal" aria-hidden="true"></div>
+                <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+                <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4" id="modal-title">Estender contrato</h3>
+                        <div class="mb-4">
+                            <label for="extendDaysCount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantidade de dias</label>
+                            <input
+                                id="extendDaysCount"
+                                type="number"
+                                min="1"
+                                wire:model="extendDaysCount"
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                            @error('extendDaysCount')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                        <button
+                            type="button"
+                            wire:click="extendContractDays"
+                            class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm"
+                        >
+                            Estender
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="closeExtendDaysModal"
+                            class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </main>
 </div>
 
