@@ -60,8 +60,8 @@
         }
         .signature-row {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 60px;
+            justify-content: center;
+            margin-bottom: 40px;
         }
         .signature-block {
             width: 45%;
@@ -88,6 +88,7 @@
 </head>
 <body>
     <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
+    <h3 class="header">Contrato Nº:</span> {{ $contract_id }}</h3>
     <div class="section">
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 54.379.584/0001-87, com sede na Av. Liberdade, nº 207B, Bairro Passo da Areia, CEP 97010-270.</p>
     </div>
@@ -216,28 +217,13 @@
                     <p>038.109.650-57</p>
                 </div>
             </div>
+        </div>
+        <div class="signature-row">
             <div class="signature-block">
                 <p><strong>LOCATÁRIO</strong></p>
                 <div class="signature-line">
                     <p><strong>{{ $motorista_nome }}</strong></p>
                     <p>{{ $motorista_documento }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="witnesses">
-            <p><strong>TESTEMUNHAS</strong></p>
-            <div class="signature-row">
-                <div class="signature-block">
-                    <div class="signature-line">
-                        <p>NOME</p>
-                        <p>CPF</p>
-                    </div>
-                </div>
-                <div class="signature-block">
-                    <div class="signature-line">
-                        <p>NOME</p>
-                        <p>CPF</p>
-                    </div>
                 </div>
             </div>
         </div>

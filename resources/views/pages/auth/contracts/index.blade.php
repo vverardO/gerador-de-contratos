@@ -15,6 +15,8 @@ new class extends Component
 
     public string $contractType = '';
 
+    public string $contractStatus = 'on_going';
+
     public string $search = '';
 
     public bool $showExtendDaysModal = false;
@@ -24,6 +26,11 @@ new class extends Component
     public int $extendDaysCount = 1;
 
     public function updatedContractType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedContractStatus(): void
     {
         $this->resetPage();
     }
@@ -96,6 +103,10 @@ new class extends Component
 
         if ($this->contractType !== '') {
             $query->where('type', $this->contractType);
+        }
+
+        if ($this->contractStatus !== '') {
+            $query->where('status', $this->contractStatus);
         }
 
         if ($this->search !== '') {
@@ -186,6 +197,19 @@ new class extends Component
                             <option value="">Todos</option>
                             @foreach(\App\Enums\ContractType::cases() as $type)
                                 <option value="{{ $type->value }}">{{ $type->label() }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <label for="filterContractStatus" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                        <select
+                            id="filterContractStatus"
+                            wire:model.live="contractStatus"
+                            class="w-full sm:w-48 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Todos</option>
+                            @foreach(\App\Enums\ContractStatus::cases() as $status)
+                                <option value="{{ $status->value }}">{{ $status->label() }}</option>
                             @endforeach
                         </select>
                     </div>

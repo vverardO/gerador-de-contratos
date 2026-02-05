@@ -131,11 +131,9 @@ new class extends Component
             </div>
         </div>
     </nav>
-
     <main class="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">Criar Motorista</h1>
-
             <form wire:submit="save">
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informações Gerais</h2>
@@ -153,15 +151,16 @@ new class extends Component
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        <div>
+                        <div x-data="{formatDocument(value){if(!value)return'';const numbers=value.replace(/\D/g,'').slice(0,11);if(numbers.length<=3)return numbers;if(numbers.length<=6)return numbers.replace(/(\d{3})(\d+)/,'$1.$2');if(numbers.length<=9)return numbers.replace(/(\d{3})(\d{3})(\d+)/,'$1.$2.$3');return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d+)/,'$1.$2.$3-$4').slice(0,14);},handleInput(event){const input=event.target;const formatted=this.formatDocument(input.value);input.value=formatted;$wire.set('document',formatted);}}" x-init="()=>{const input=$el.querySelector('#document');if(input&&$wire.document){input.value=formatDocument($wire.document);} $watch('$wire.document',value=>{if(value&&input&&input!==document.activeElement){input.value=formatDocument(value);}});}">
                             <label for="document" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Documento</label>
                             <input
                                 type="text"
                                 id="document"
-                                wire:model="document"
+                                maxlength="14"
+                                x-on:input="handleInput($event)"
+                                x-on:blur="$event.target.value = formatDocument($event.target.value)"
                                 class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Documento do motorista"
+                                placeholder="000.000.000-00"
                             >
                             @error('document')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -169,7 +168,6 @@ new class extends Component
                         </div>
                     </div>
                 </div>
-
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Endereço</h2>
                     <div class="space-y-4">
@@ -272,7 +270,6 @@ new class extends Component
                         </div>
                     </div>
                 </div>
-
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                     <button
                         type="submit"

@@ -19,6 +19,7 @@ class ContractService
     public function getContractHtml(Contract $contract): string
     {
         $templateData = [
+            'contract_id' => $contract->id,
             'motorista_nome' => $contract->driver_name,
             'motorista_documento' => $contract->driver_document,
             'motorista_rua' => $contract->driver_street,

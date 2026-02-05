@@ -657,7 +657,8 @@ new class extends Component
                                 type="text"
                                 id="driverName"
                                 wire:model="driverName"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewDriver) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="Nome do motorista"
                             >
                             @error('driverName')
@@ -670,8 +671,9 @@ new class extends Component
                                 type="text"
                                 id="driverDocument"
                                 wire:model="driverDocument"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                                @if(!$creatingNewDriver) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
+                                placeholder="000.000.000-00"
                             >
                             @error('driverDocument')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -686,7 +688,8 @@ new class extends Component
                                     type="text"
                                     id="driverZipCode"
                                     wire:model="driverZipCode"
-                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    @if(!$creatingNewDriver) readonly @endif
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                     placeholder="00000-000"
                                 >
                                 @error('driverZipCode')
@@ -699,7 +702,8 @@ new class extends Component
                                     type="text"
                                     id="driverStreet"
                                     wire:model="driverStreet"
-                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    @if(!$creatingNewDriver) readonly @endif
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                     placeholder="Rua do motorista"
                                 >
                                 @error('driverStreet')
@@ -714,7 +718,8 @@ new class extends Component
                                     type="text"
                                     id="driverNumber"
                                     wire:model="driverNumber"
-                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    @if(!$creatingNewDriver) readonly @endif
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                     placeholder="Número"
                                 >
                                 @error('driverNumber')
@@ -727,7 +732,8 @@ new class extends Component
                                     type="text"
                                     id="driverNeighborhood"
                                     wire:model="driverNeighborhood"
-                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    @if(!$creatingNewDriver) readonly @endif
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                     placeholder="Bairro"
                                 >
                                 @error('driverNeighborhood')
@@ -809,7 +815,8 @@ new class extends Component
                                 type="text"
                                 id="vehicle"
                                 wire:model="vehicle"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewVehicle) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="Ex: Chevrolet Onix"
                             >
                             @error('vehicle')
@@ -822,7 +829,8 @@ new class extends Component
                                 type="text"
                                 id="manufacturingModel"
                                 wire:model="manufacturingModel"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewVehicle) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="Ex: 2023/2024"
                             >
                             @error('manufacturingModel')
@@ -835,7 +843,8 @@ new class extends Component
                                 type="text"
                                 id="licensePlate"
                                 wire:model="licensePlate"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewVehicle) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="ABC1D23"
                             >
                             @error('licensePlate')
@@ -848,7 +857,8 @@ new class extends Component
                                 type="text"
                                 id="chassis"
                                 wire:model="chassis"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewVehicle) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="Chassi do veículo"
                             >
                             @error('chassis')
@@ -861,7 +871,8 @@ new class extends Component
                                 type="text"
                                 id="renavam"
                                 wire:model="renavam"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                @if(!$creatingNewVehicle) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
                                 placeholder="RENAVAM"
                             >
                             @error('renavam')
@@ -954,7 +965,8 @@ new class extends Component
                                 type="text"
                                 id="ownerName"
                                 wire:model="ownerName"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                readonly
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed text-gray-900 dark:text-gray-100"
                                 placeholder="Nome do proprietário"
                             >
                             @error('ownerName')
@@ -967,7 +979,8 @@ new class extends Component
                                 type="text"
                                 id="ownerDocument"
                                 wire:model="ownerDocument"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                readonly
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed text-gray-900 dark:text-gray-100"
                                 placeholder="000.000.000-00 ou 00.000.000/0000-00"
                             >
                             @error('ownerDocument')
