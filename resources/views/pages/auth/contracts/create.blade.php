@@ -44,6 +44,8 @@ new class extends Component
 
     public string $driverDocument = '';
 
+    public string $driverLicense = '';
+
     public string $driverStreet = '';
 
     public string $driverNumber = '';
@@ -97,6 +99,7 @@ new class extends Component
         $this->creatingNewDriver = false;
         $this->driverName = $driver->name;
         $this->driverDocument = $driver->document_formatted;
+        $this->driverLicense = $driver->driver_license ?? '';
         $this->driverSearch = $driver->name;
 
         if ($driver->address) {
@@ -120,6 +123,7 @@ new class extends Component
         $this->driverSearch = '';
         $this->driverName = '';
         $this->driverDocument = '';
+        $this->driverLicense = '';
         $this->driverStreet = '';
         $this->driverNumber = '';
         $this->driverNeighborhood = '';
@@ -332,6 +336,7 @@ new class extends Component
         $rules = [
             'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
             'driverName' => ['required', 'string', 'max:255'],
+            'driverLicense' => ['nullable', 'string', 'max:255'],
             'driverDocument' => array_merge(
                 ['required', 'string', 'max:255'],
                 $this->creatingNewDriver ? [
@@ -425,6 +430,7 @@ new class extends Component
             $driver = Driver::create([
                 'name' => $this->driverName,
                 'document' => $this->documentToRaw($this->driverDocument),
+                'driver_license' => $this->driverLicense ?: null,
             ]);
             DriverAddress::create([
                 'driver_id' => $driver->id,
@@ -466,6 +472,7 @@ new class extends Component
             'type' => $this->type,
             'driver_name' => $this->driverName,
             'driver_document' => $this->driverDocument,
+            'driver_license' => $this->driverLicense ?: null,
             'driver_street' => $this->driverStreet,
             'driver_number' => $this->driverNumber,
             'driver_neighborhood' => $this->driverNeighborhood,
@@ -662,6 +669,20 @@ new class extends Component
                                 placeholder="Nome do motorista"
                             >
                             @error('driverName')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="driverLicense" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CNH</label>
+                            <input
+                                type="text"
+                                id="driverLicense"
+                                wire:model="driverLicense"
+                                @if(!$creatingNewDriver) readonly @endif
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewDriver ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
+                                placeholder="Número da CNH"
+                            >
+                            @error('driverLicense')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>

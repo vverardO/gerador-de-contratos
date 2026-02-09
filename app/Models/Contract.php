@@ -20,6 +20,7 @@ class Contract extends Model
         'status',
         'driver_name',
         'driver_document',
+        'driver_license',
         'driver_street',
         'driver_number',
         'driver_neighborhood',

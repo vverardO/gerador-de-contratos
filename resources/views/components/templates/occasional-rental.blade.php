@@ -93,7 +93,7 @@
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 54.379.584/0001-87, com sede na Av. Liberdade, nº 207B, Bairro Passo da Areia, CEP 97010-270.</p>
     </div>
     <div class="section">
-        <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, CPF {{ $motorista_documento }}, residente e domiciliado à {{ $motorista_rua }}, nº {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, CEP {{ $motorista_cep }}.</p>
+        <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, @if(!empty($motorista_cnh))CNH nº {{ $motorista_cnh }}, @endif CPF {{ $motorista_documento }}, residente e domiciliado à {{ $motorista_rua }}, nº {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, CEP {{ $motorista_cep }}.</p>
     </div>
     <div class="section">
         <p><span class="bold underline">VEÍCULO</span>: O presente contrato tem como objeto único e exclusivo a locação do automóvel com as seguintes informações: {{ $veiculo }}, ano de fabricação/modelo {{ $fabricacao_modelo }}, placa {{ $placa }}, chassi {{ $chassi }}, RENAVAM {{ $renavam }}.</p>
@@ -214,7 +214,7 @@
                 <p><strong>PELA LOCADORA</strong></p>
                 <div class="signature-line">
                     <p><strong>GABRIEL CEZIMBRA</strong></p>
-                    <p>038.109.650-57</p>
+                    <p>CPF - 038.109.650-57</p>
                 </div>
             </div>
         </div>
@@ -223,7 +223,8 @@
                 <p><strong>LOCATÁRIO</strong></p>
                 <div class="signature-line">
                     <p><strong>{{ $motorista_nome }}</strong></p>
-                    <p>{{ $motorista_documento }}</p>
+                    @if(!empty($motorista_cnh))<p>CNH - {{ $motorista_cnh }}</p>@endif
+                    <p>CPF - {{ $motorista_documento }}</p>
                 </div>
             </div>
         </div>

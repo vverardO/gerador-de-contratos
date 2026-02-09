@@ -11,6 +11,7 @@ class DriverFactory extends Factory
         return [
             'name' => fake()->name(),
             'document' => fake()->numerify('###########'),
+            'driver_license' => fake()->optional(0.8)->numerify('########'),
         ];
     }
 }

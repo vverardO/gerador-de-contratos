@@ -2,17 +2,11 @@
 
 namespace App\Services;
 
-use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Models\Contract;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
-use Exception;
-use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class ContractService
 {
@@ -22,6 +16,7 @@ class ContractService
             'contract_id' => $contract->id,
             'motorista_nome' => $contract->driver_name,
             'motorista_documento' => $contract->driver_document,
+            'motorista_cnh' => $contract->driver_license ?? '',
             'motorista_rua' => $contract->driver_street,
             'motorista_numero' => $contract->driver_number,
             'motorista_bairro' => $contract->driver_neighborhood,

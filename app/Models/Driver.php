@@ -15,6 +15,7 @@ class Driver extends Model
     protected $fillable = [
         'name',
         'document',
+        'driver_license',
     ];
 
     protected function documentFormatted(): Attribute
