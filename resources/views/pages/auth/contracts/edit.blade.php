@@ -33,6 +33,8 @@ new class extends Component
 
     public string $driverLicense = '';
 
+    public string $driverLicenseExpiration = '';
+
     public string $driverStreet = '';
 
     public string $driverNumber = '';
@@ -72,6 +74,7 @@ new class extends Component
         $this->driverName = $this->contract->driver_name;
         $this->driverDocument = $this->contract->driver_document;
         $this->driverLicense = $this->contract->driver_license ?? '';
+        $this->driverLicenseExpiration = $this->contract->driver_license_expiration?->format('Y-m-d') ?? '';
         $this->driverStreet = $this->contract->driver_street;
         $this->driverNumber = $this->contract->driver_number;
         $this->driverNeighborhood = $this->contract->driver_neighborhood;
@@ -106,6 +109,7 @@ new class extends Component
         $this->driverName = $driver->name;
         $this->driverDocument = $driver->document_formatted;
         $this->driverLicense = $driver->driver_license ?? '';
+        $this->driverLicenseExpiration = $driver->driver_license_expiration?->format('Y-m-d') ?? '';
         $this->driverSearch = $driver->name;
 
         if ($driver->address) {
@@ -253,6 +257,7 @@ new class extends Component
             'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
             'driverName' => ['required', 'string', 'max:255'],
             'driverLicense' => ['nullable', 'string', 'max:255'],
+            'driverLicenseExpiration' => ['nullable', 'date'],
             'driverDocument' => ['required', 'string', 'max:255'],
             'driverStreet' => ['required', 'string', 'max:255'],
             'driverNumber' => ['required', 'string', 'max:255'],
@@ -303,6 +308,7 @@ new class extends Component
             'driver_name' => $this->driverName,
             'driver_document' => $this->driverDocument,
             'driver_license' => $this->driverLicense ?: null,
+            'driver_license_expiration' => $this->driverLicenseExpiration ?: null,
             'driver_street' => $this->driverStreet,
             'driver_number' => $this->driverNumber,
             'driver_neighborhood' => $this->driverNeighborhood,
@@ -499,6 +505,19 @@ new class extends Component
                                 placeholder="Número da CNH"
                             >
                             @error('driverLicense')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="driverLicenseExpiration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Validade da CNH</label>
+                            <input
+                                readonly
+                                type="date"
+                                id="driverLicenseExpiration"
+                                wire:model="driverLicenseExpiration"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            >
+                            @error('driverLicenseExpiration')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>

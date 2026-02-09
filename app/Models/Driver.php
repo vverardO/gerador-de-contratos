@@ -16,6 +16,11 @@ class Driver extends Model
         'name',
         'document',
         'driver_license',
+        'driver_license_expiration',
+    ];
+
+    protected $casts = [
+        'driver_license_expiration' => 'date',
     ];
 
     protected function documentFormatted(): Attribute

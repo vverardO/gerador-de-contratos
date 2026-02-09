@@ -21,6 +21,7 @@ class Contract extends Model
         'driver_name',
         'driver_document',
         'driver_license',
+        'driver_license_expiration',
         'driver_street',
         'driver_number',
         'driver_neighborhood',
@@ -43,6 +44,7 @@ class Contract extends Model
         'type' => ContractType::class,
         'status' => ContractStatus::class,
         'value' => 'integer',
+        'driver_license_expiration' => 'date',
     ];
 
     protected function valueFormatted(): Attribute

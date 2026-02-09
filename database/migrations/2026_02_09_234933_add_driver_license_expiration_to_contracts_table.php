@@ -9,14 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            $table->string('driver_license')->nullable()->after('driver_document');
+            $table->date('driver_license_expiration')->nullable()->after('driver_license');
         });
     }
 
     public function down(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            $table->dropColumn('driver_license');
+            $table->dropColumn('driver_license_expiration');
         });
     }
 };
