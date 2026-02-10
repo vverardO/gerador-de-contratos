@@ -119,7 +119,7 @@
         <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, @if(!empty($motorista_cnh))CNH nº {{ $motorista_cnh }}, @endif CPF {{ $motorista_documento }}, endereço {{ $motorista_rua }}, N {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, {{ $motorista_cidade }} CEP {{ $motorista_cep }}.</p>
     </div>
     <div class="section">
-        <p><span class="bold underline">VEÍCULO</span>: O presente contrato tem como objeto único e exclusivo a Locação do automóvel com as seguintes informações: {{ $veiculo }}, ano de fabricação e modelo {{ $fabricacao_modelo }}, placa {{ $placa }}, chassi {{ $chassi }}, RENAVAM {{ $renavam }}.</p>
+        <p><span class="bold underline">VEÍCULO</span>: O presente contrato tem como objeto único e exclusivo a Locação do automóvel com as seguintes informações: {{ $veiculo }}, ano de fabricação e modelo {{ $fabricacao_modelo }}, placa {{ $placa }}, CHASSI {{ $chassi }}, RENAVAM {{ $renavam }}.</p>
     </div>
     <div class="section">
         <p><span class="bold underline">PROPRIETÁRIO DO VEÍCULO</span>: {{ $proprietario_nome }}, CPF/CNPJ {{ $proprietario_documento }}.</p>

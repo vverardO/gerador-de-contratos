@@ -421,7 +421,7 @@ new class extends Component
             'vehicle.required' => 'O veículo é obrigatório.',
             'manufacturingModel.required' => 'O modelo/fabricação é obrigatório.',
             'licensePlate.required' => 'A placa é obrigatória.',
-            'chassis.required' => 'O chassi é obrigatório.',
+            'chassis.required' => 'O CHASSI é obrigatório.',
             'renavam.required' => 'O RENAVAM é obrigatório.',
             'ownerName.required' => 'O nome do proprietário é obrigatório.',
             'ownerDocument.required' => 'O documento do proprietário é obrigatório.',
@@ -927,7 +927,7 @@ new class extends Component
                                     wire:model="chassis"
                                     @if(!$creatingNewVehicle) readonly @endif
                                     class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 {{ $creatingNewVehicle ? 'bg-white dark:bg-gray-700' : 'bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed' }} text-gray-900 dark:text-gray-100"
-                                    placeholder="Chassi do veículo"
+                                    placeholder="CHASSI"
                                 >
                                 @error('chassis')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
