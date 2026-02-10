@@ -110,14 +110,8 @@
     </style>
 </head>
 <body>
-    <div class="documentHeader">
-        <img src="/images/watter_mark.jpg" alt="IZI CAR" class="headerLogo">
-        <div class="headerTitles">
-            <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
-            <h3 class="header">Contrato Nº: {{ $contract_id }}</h3>
-        </div>
-        <img src="/images/watter_mark.jpg" alt="IZI CAR" class="headerLogo">
-    </div>
+    <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
+    <h3 class="header">Contrato Nº: {{ $contract_id }}</h3>
     <div class="section">
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 54.379.584/0001-87, com sede na Av. Liberdade, nº 207B, Bairro Passo da Areia, CEP 97010-270.</p>
     </div>
