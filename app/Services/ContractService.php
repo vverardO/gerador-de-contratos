@@ -34,16 +34,14 @@ class ContractService
             'valor' => $contract->value_formatted,
             'valor_extenso' => $contract->value_in_words,
             'data_hoje' => $contract->today_date ? Carbon::parse($contract->today_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
-            'data_hoje_extenso' => $contract->today_date ? Carbon::parse($contract->today_date)->translatedFormat('d').' de '.Carbon::parse($contract->today_date)->translatedFormat('F').' de '.Carbon::parse($contract->today_date)->translatedFormat('Y') : Carbon::now()->translatedFormat('d').' de '.Carbon::now()->translatedFormat('F').' de '.Carbon::now()->translatedFormat('Y'),
             'caucao' => $contract->deposit_formatted,
             'caucao_extenso' => $contract->deposit_in_words,
         ];
 
-        Carbon::setLocale('pt_BR');
-
         $carbonStartDate = Carbon::parse($contract->start_date);
         $carbonEndDate = Carbon::parse($contract->end_date);
         $carbonTodayDate = Carbon::now();
+        $carbonContractTodayDate = Carbon::parse($contract->today_date);
 
         if ($contract->today_date) {
             $carbonTodayDate = Carbon::parse($contract->today_date);
@@ -52,6 +50,7 @@ class ContractService
         $startDateString = $carbonStartDate->translatedFormat('d').' de '.$carbonStartDate->translatedFormat('F').' de '.$carbonStartDate->translatedFormat('Y');
         $endDateString = $carbonEndDate->translatedFormat('d').' de '.$carbonEndDate->translatedFormat('F').' de '.$carbonEndDate->translatedFormat('Y');
         $todayDateString = $carbonTodayDate->translatedFormat('d').' de '.$carbonTodayDate->translatedFormat('F').' de '.$carbonTodayDate->translatedFormat('Y');
+        $contractTodayDateString = $carbonContractTodayDate->translatedFormat('d').' de '.$carbonContractTodayDate->translatedFormat('F').' de '.$carbonContractTodayDate->translatedFormat('Y');
 
         if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
             $templateData['valor_total'] = $contract->value_formatted;
@@ -60,6 +59,8 @@ class ContractService
             $templateData['data_inicio'] = $startDateString ?? $todayDateString;
             $templateData['data_fim'] = $endDateString ?? $todayDateString;
         }
+
+        $templateData['data_hoje_extenso'] = $contractTodayDateString;
 
         $templateName = match ($contract->type) {
             ContractType::APP_RENTAL => 'app-rental',
