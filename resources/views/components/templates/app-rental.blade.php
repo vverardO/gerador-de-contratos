@@ -116,7 +116,7 @@
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS CNPJ: 54.379.584/0001-87, AV Liberdade 207B, bairro Passo da Areia, CEP 97010-270.</p>
     </div>
     <div class="section">
-        <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, @if(!empty($motorista_cnh))CNH nº {{ $motorista_cnh }}, @endif CPF {{ $motorista_documento }}, endereço {{ $motorista_rua }}, N {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, CEP {{ $motorista_cep }}.</p>
+        <p><span class="bold underline">LOCATÁRIO</span>: {{ $motorista_nome }}, brasileiro, solteiro, @if(!empty($motorista_cnh))CNH nº {{ $motorista_cnh }}, @endif CPF {{ $motorista_documento }}, endereço {{ $motorista_rua }}, N {{ $motorista_numero }}, Bairro {{ $motorista_bairro }}, {{ $motorista_cidade }} CEP {{ $motorista_cep }}.</p>
     </div>
     <div class="section">
         <p><span class="bold underline">VEÍCULO</span>: O presente contrato tem como objeto único e exclusivo a Locação do automóvel com as seguintes informações: {{ $veiculo }}, ano de fabricação e modelo {{ $fabricacao_modelo }}, placa {{ $placa }}, chassi {{ $chassi }}, RENAVAM {{ $renavam }}.</p>
