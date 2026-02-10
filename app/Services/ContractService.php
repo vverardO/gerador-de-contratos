@@ -12,6 +12,8 @@ class ContractService
 {
     public function getContractHtml(Contract $contract): string
     {
+        Carbon::setLocale('pt_BR');
+
         $templateData = [
             'contract_id' => $contract->id,
             'motorista_nome' => $contract->driver_name,
