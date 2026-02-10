@@ -57,15 +57,21 @@
         .signatures {
             margin-top: 50px;
             page-break-inside: avoid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .signature-row {
+            margin-bottom: 40px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            margin-bottom: 40px;
         }
         .signature-block {
             width: 45%;
+            max-width: 320px;
             text-align: center;
+            margin: 0 auto;
         }
         .signature-line {
             border-top: 1px solid #000;
@@ -78,6 +84,23 @@
         }
         .witnesses {
             margin-top: 40px;
+        }
+        .documentHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        .headerLogo {
+            width: 100px;
+            height: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+        .headerTitles {
+            flex: 1;
+            text-align: center;
         }
         @media print {
             body {
@@ -136,7 +159,7 @@
     </div>
     <div class="clause">
         <p class="clause-title">CLÁUSULA 6ª - DA GARANTIA E DO FUNDO DO LOCATÁRIO</p>
-        <p>Como garantia do presente contrato, o <strong>LOCATÁRIO</strong> pagou a quantia de R$500,00 (QUINHENTOS REAIS) o qual equivale à parte do valor da franquia de seguro do veículo, objeto do presente instrumento.</p>
+        <p>Como garantia do presente contrato, o <strong>LOCATÁRIO</strong> pagou a quantia de R$ {{ $caucao }} ({{ $caucao_extenso }}) o qual equivale à parte do valor da franquia de seguro do veículo, objeto do presente instrumento.</p>
         <p class="paragraph"><strong>§1:</strong> Se o <strong>LOCATÁRIO</strong> não restituir o veículo na data estipulada contratualmente, sem a realização de aditivo contratual, implicará a perda da caução, além de responder pelos danos que o automóvel vier a sofrer mesmo se provenientes de caso fortuito ou força maior, sem prejuízo do pagamento das diárias até a data da entrega do veículo à <strong>LOCADORA</strong>.</p>
         <p class="paragraph"><strong>§2:</strong> A caução será devolvida em até 30 dias úteis, após final da locação, ou de haver valores que sejam devidos pelo locatário, por aluguel, multas, avarias os possíveis débitos serão descontados da caução.</p>
         <p class="paragraph"><strong>§3:</strong> Caso o <strong>LOCATÁRIO</strong> resolva devolver o veículo objeto deste contrato antes do prazo inicial de 30 dias, o valor acumulado de caução referente ao tempo em que ficou com o carro não será devolvido a título de quebra de contrato.</p>
@@ -210,15 +233,15 @@
         <p class="paragraph"><strong>§3:</strong> <strong>Caso a chave seja devolvida sem a tag, a LOCADORA considerará a remoção como descumprimento desta Cláusula, aplicando a respectiva multa.</strong></p>
     </div>
     <div class="location-date">
-        <p>Santa Maria, {{ $data_hoje }}.</p>
+        <p>Santa Maria, {{ $data_hoje_extenso }}.</p>
     </div>
     <div class="signatures">
         <div class="signature-row">
             <div class="signature-block">
                 <p><strong>PELA LOCADORA</strong></p>
                 <div class="signature-line">
-                    <p><strong>GABRIEL CEZIMBRA</strong></p>
-                    <p>CPF - 038.109.650-57</p>
+                    <p><strong>IZI CAR LOCAÇÕES DE VEÍCULOS</strong></p>
+                    <p>CNPJ - 54.379.584/0001-87</p>
                 </div>
             </div>
         </div>

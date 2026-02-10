@@ -43,6 +43,8 @@ new class extends Component
 
     public string $driverZipCode = '';
 
+    public string $driverCity = '';
+
     public string $vehicle = '';
 
     public string $manufacturingModel = '';
@@ -58,6 +60,8 @@ new class extends Component
     public string $ownerDocument = '';
 
     public string $value = '';
+
+    public string $deposit = '';
 
     public string $todayDate = '';
 
@@ -79,6 +83,7 @@ new class extends Component
         $this->driverNumber = $this->contract->driver_number;
         $this->driverNeighborhood = $this->contract->driver_neighborhood;
         $this->driverZipCode = $this->contract->driver_zip_code;
+        $this->driverCity = $this->contract->driver_city ?? '';
         $this->vehicle = $this->contract->vehicle;
         $this->manufacturingModel = $this->contract->manufacturing_model;
         $this->licensePlate = $this->contract->license_plate;
@@ -87,6 +92,7 @@ new class extends Component
         $this->ownerName = $this->contract->owner_name;
         $this->ownerDocument = $this->contract->owner_document;
         $this->value = $this->formatCentsToDisplay((int) $this->contract->value);
+        $this->deposit = $this->formatCentsToDisplay((int) ($this->contract->deposit ?? 0));
         $this->todayDate = Carbon::parse($this->contract->today_date)->format('Y-m-d');
         $this->quantityDays = $this->contract->quantity_days;
         $this->startDate = Carbon::parse($this->contract->start_date)->format('Y-m-d');
@@ -117,6 +123,7 @@ new class extends Component
             $this->driverNumber = $driver->address->number ?? '';
             $this->driverNeighborhood = $driver->address->neighborhood;
             $this->driverZipCode = $driver->address->postal_code;
+            $this->driverCity = $driver->address->city ?? '';
         }
     }
 
@@ -263,6 +270,7 @@ new class extends Component
             'driverNumber' => ['required', 'string', 'max:255'],
             'driverNeighborhood' => ['required', 'string', 'max:255'],
             'driverZipCode' => ['required', 'string', 'max:255'],
+            'driverCity' => ['nullable', 'string', 'max:255'],
             'vehicle' => ['required', 'string', 'max:255'],
             'manufacturingModel' => ['required', 'string', 'max:255'],
             'licensePlate' => ['required', 'string', 'max:255'],
@@ -271,6 +279,7 @@ new class extends Component
             'ownerName' => ['required', 'string', 'max:255'],
             'ownerDocument' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'max:255'],
+            'deposit' => ['nullable', 'string', 'max:255'],
             'todayDate' => ['required', 'string', 'max:255'],
         ];
 
@@ -313,6 +322,7 @@ new class extends Component
             'driver_number' => $this->driverNumber,
             'driver_neighborhood' => $this->driverNeighborhood,
             'driver_zip_code' => $this->driverZipCode,
+            'driver_city' => $this->driverCity,
             'vehicle' => $this->vehicle,
             'manufacturing_model' => $this->manufacturingModel,
             'license_plate' => $this->licensePlate,
@@ -321,6 +331,7 @@ new class extends Component
             'owner_name' => $this->ownerName,
             'owner_document' => $this->ownerDocument,
             'value' => $this->parseDisplayToCents($this->value),
+            'deposit' => $this->parseDisplayToCents($this->deposit),
             'today_date' => $this->todayDate,
         ];
 
@@ -509,6 +520,20 @@ new class extends Component
                             @enderror
                         </div>
                         <div>
+                            <label for="driverDocument" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Documento do Motorista</label>
+                            <input
+                                readonly
+                                type="text"
+                                id="driverDocument"
+                                wire:model="driverDocument"
+                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                            >
+                            @error('driverDocument')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
                             <label for="driverLicenseExpiration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Validade da CNH</label>
                             <input
                                 readonly
@@ -518,20 +543,6 @@ new class extends Component
                                 class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             >
                             @error('driverLicenseExpiration')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="driverDocument" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Documento do Motorista</label>
-                            <input
-                                readonly    
-                                type="text"
-                                id="driverDocument"
-                                wire:model="driverDocument"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="000.000.000-00 ou 00.000.000/0000-00"
-                            >
-                            @error('driverDocument')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -552,7 +563,7 @@ new class extends Component
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <div class="md:col-span-2">
+                            <div>
                                 <label for="driverStreet" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rua</label>
                                 <input
                                     readonly
@@ -566,8 +577,6 @@ new class extends Component
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="driverNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número</label>
                                 <input
@@ -582,6 +591,8 @@ new class extends Component
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="driverNeighborhood" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bairro</label>
                                 <input
@@ -593,6 +604,20 @@ new class extends Component
                                     placeholder="Bairro"
                                 >
                                 @error('driverNeighborhood')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="driverCity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cidade</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="driverCity"
+                                    wire:model="driverCity"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Cidade"
+                                >
+                                @error('driverCity')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -633,76 +658,80 @@ new class extends Component
                             @endif
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="vehicle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Veículo</label>
-                            <input
-                                readonly
-                                type="text"
-                                id="vehicle"
-                                wire:model="vehicle"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Ex: Chevrolet Onix"
-                            >
-                            @error('vehicle')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="vehicle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Veículo</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="vehicle"
+                                    wire:model="vehicle"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Ex: Chevrolet Onix"
+                                >
+                                @error('vehicle')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="manufacturingModel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fabricação/Modelo</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="manufacturingModel"
+                                    wire:model="manufacturingModel"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Ex: 2023/2024"
+                                >
+                                @error('manufacturingModel')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
-                        <div>
-                            <label for="manufacturingModel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fabricação/Modelo</label>
-                            <input
-                                readonly
-                                type="text"
-                                id="manufacturingModel"
-                                wire:model="manufacturingModel"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Ex: 2023/2024"
-                            >
-                            @error('manufacturingModel')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="licensePlate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Placa</label>
-                            <input
-                                readonly
-                                type="text"
-                                id="licensePlate"
-                                wire:model="licensePlate"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="ABC1D23"
-                            >
-                            @error('licensePlate')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="chassis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chassi</label>
-                            <input
-                                readonly
-                                type="text"
-                                id="chassis"
-                                wire:model="chassis"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="Chassi do veículo"
-                            >
-                            @error('chassis')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="renavam" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">RENAVAM</label>
-                            <input
-                                readonly
-                                type="text"
-                                id="renavam"
-                                wire:model="renavam"
-                                class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                placeholder="RENAVAM"
-                            >
-                            @error('renavam')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="licensePlate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Placa</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="licensePlate"
+                                    wire:model="licensePlate"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="ABC1D23"
+                                >
+                                @error('licensePlate')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="chassis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chassi</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="chassis"
+                                    wire:model="chassis"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="Chassi do veículo"
+                                >
+                                @error('chassis')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="renavam" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">RENAVAM</label>
+                                <input
+                                    readonly
+                                    type="text"
+                                    id="renavam"
+                                    wire:model="renavam"
+                                    class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    placeholder="RENAVAM"
+                                >
+                                @error('renavam')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -774,7 +803,7 @@ new class extends Component
 
                 <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 sm:p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Valores e Data</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label for="value" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor</label>
                             <div class="mt-2 relative">
@@ -827,6 +856,49 @@ new class extends Component
                                 >
                             </div>
                             @error('value')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="deposit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Caução</label>
+                            <div class="mt-2 relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">R$</span>
+                                <input
+                                    type="text"
+                                    id="deposit"
+                                    x-data="{
+                                        applyMoneyMask(event) {
+                                            const input = event.target;
+                                            const value = input.value.replace(/[^\d]/g, '');
+                                            if (!value) {
+                                                input.value = '';
+                                                $wire.set('deposit', '');
+                                                return;
+                                            }
+                                            const cents = parseInt(value);
+                                            const reais = (cents / 100).toFixed(2);
+                                            input.value = reais.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                            $wire.set('deposit', input.value);
+                                        },
+                                        init() {
+                                            if (this.$wire.deposit !== null && this.$wire.deposit !== undefined && this.$wire.deposit !== '') {
+                                                const num = parseFloat(this.$wire.deposit.toString().replace(/[^\d,]/g, '').replace(',', '.'));
+                                                if (!isNaN(num)) this.$el.value = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                            }
+                                            this.$watch('$wire.deposit', value => {
+                                                if (value !== null && value !== undefined && value !== '') {
+                                                    const num = parseFloat(value.toString().replace(/[^\d,]/g, '').replace(',', '.'));
+                                                    if (!isNaN(num)) this.$el.value = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                                } else this.$el.value = '';
+                                            });
+                                        }
+                                    }"
+                                    x-on:input="applyMoneyMask($event)"
+                                    placeholder="0,00"
+                                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 py-2 pl-10 pr-4 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                >
+                            </div>
+                            @error('deposit')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>

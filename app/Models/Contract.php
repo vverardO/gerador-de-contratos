@@ -26,6 +26,7 @@ class Contract extends Model
         'driver_number',
         'driver_neighborhood',
         'driver_zip_code',
+        'driver_city',
         'vehicle',
         'manufacturing_model',
         'license_plate',
@@ -34,6 +35,7 @@ class Contract extends Model
         'owner_name',
         'owner_document',
         'value',
+        'deposit',
         'today_date',
         'quantity_days',
         'start_date',
@@ -44,6 +46,7 @@ class Contract extends Model
         'type' => ContractType::class,
         'status' => ContractStatus::class,
         'value' => 'integer',
+        'deposit' => 'integer',
         'driver_license_expiration' => 'date',
     ];
 
@@ -75,7 +78,51 @@ class Contract extends Model
             $reaisExtenso = $formatter->format($reais);
             $centavosExtenso = $formatter->format($centavos);
 
-            return sprintf('%s reais com %s centavos', trim($reaisExtenso), trim($centavosExtenso));
+            $response = sprintf('%s reais', trim($reaisExtenso));
+
+            if ($centavos > 0) {
+                $response .= sprintf(' e %s centavos', trim($centavosExtenso));
+            }
+
+            return $response;
+        });
+    }
+
+    protected function depositFormatted(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $cents = (int) ($this->attributes['deposit'] ?? 0);
+            if ($cents === 0) {
+                return '0,00';
+            }
+
+            return number_format($cents / 100, 2, ',', '.');
+        });
+    }
+
+    protected function depositInWords(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $cents = (int) ($this->attributes['deposit'] ?? 0);
+            if ($cents === 0) {
+                return '';
+            }
+
+            $reais = (int) floor($cents / 100);
+            $centavos = $cents % 100;
+
+            $formatter = new NumberFormatter('pt_BR', NumberFormatter::SPELLOUT);
+
+            $reaisExtenso = $formatter->format($reais);
+            $centavosExtenso = $formatter->format($centavos);
+
+            $response = sprintf('%s reais', trim($reaisExtenso));
+
+            if ($centavos > 0) {
+                $response .= sprintf(' e %s centavos', trim($centavosExtenso));
+            }
+
+            return $response;
         });
     }
 

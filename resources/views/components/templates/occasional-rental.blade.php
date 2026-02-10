@@ -57,15 +57,21 @@
         .signatures {
             margin-top: 50px;
             page-break-inside: avoid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .signature-row {
+            margin-bottom: 40px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            margin-bottom: 40px;
         }
         .signature-block {
             width: 45%;
+            max-width: 320px;
             text-align: center;
+            margin: 0 auto;
         }
         .signature-line {
             border-top: 1px solid #000;
@@ -79,6 +85,23 @@
         .witnesses {
             margin-top: 40px;
         }
+        .documentHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        .headerLogo {
+            width: 100px;
+            height: auto;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+        .headerTitles {
+            flex: 1;
+            text-align: center;
+        }
         @media print {
             body {
                 padding: 20px 40px;
@@ -87,8 +110,14 @@
     </style>
 </head>
 <body>
-    <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
-    <h3 class="header">Contrato Nº:</span> {{ $contract_id }}</h3>
+    <div class="documentHeader">
+        <img src="/images/watter_mark.jpg" alt="IZI CAR" class="headerLogo">
+        <div class="headerTitles">
+            <h1 class="header">CONTRATO DE LOCAÇÃO DE VEÍCULO POR PRAZO DETERMINADO</h1>
+            <h3 class="header">Contrato Nº: {{ $contract_id }}</h3>
+        </div>
+        <img src="/images/watter_mark.jpg" alt="IZI CAR" class="headerLogo">
+    </div>
     <div class="section">
         <p><span class="bold underline">LOCADOR</span>: IZI CAR LOCAÇÕES DE VEÍCULOS, pessoa jurídica de direito privado, inscrita no CNPJ sob nº 54.379.584/0001-87, com sede na Av. Liberdade, nº 207B, Bairro Passo da Areia, CEP 97010-270.</p>
     </div>
@@ -138,7 +167,7 @@
     </div>
     <div class="clause">
         <p class="clause-title">CLÁUSULA 6ª – DA GARANTIA E DO FUNDO DO LOCATÁRIO</p>
-        <p>Como garantia do presente contrato, o LOCATÁRIO pagou a quantia de R$ 500,00 (quinhentos reais), equivalente a parte do valor da franquia do seguro do veículo objeto deste instrumento.</p>
+        <p>Como garantia do presente contrato, o LOCATÁRIO pagou a quantia de R$ {{ $caucao }} ({{ $caucao_extenso }}), equivalente a parte do valor da franquia do seguro do veículo objeto deste instrumento.</p>
         <p class="paragraph"><strong>§1º</strong> A não restituição do veículo na data estipulada contratualmente, sem aditivo, implicará a perda da caução, além da responsabilidade do LOCATÁRIO por eventuais danos sofridos pelo automóvel, inclusive por caso fortuito ou força maior, sem prejuízo do pagamento das diárias até a efetiva entrega.</p>
         <p class="paragraph"><strong>§2º</strong> A caução será devolvida em até 30 (trinta) dias úteis após o término da locação, descontados eventuais valores devidos a título de aluguel, multas ou avarias.</p>
         <p class="paragraph"><strong>§3º</strong> Caso o LOCATÁRIO devolva o veículo antes do prazo inicialmente contratado, o valor acumulado da caução não será devolvido, a título de quebra contratual.</p>
@@ -206,15 +235,15 @@
         <p class="paragraph"><strong>§ 3º</strong> A devolução da chave sem a tag será considerada descumprimento contratual, sujeitando o LOCATÁRIO à multa prevista.</p>
     </div>
     <div class="location-date">
-        <p>Santa Maria, {{ $data_hoje }}.</p>
+        <p>Santa Maria, {{ $data_hoje_extenso }}.</p>
     </div>
     <div class="signatures">
         <div class="signature-row">
             <div class="signature-block">
                 <p><strong>PELA LOCADORA</strong></p>
                 <div class="signature-line">
-                    <p><strong>GABRIEL CEZIMBRA</strong></p>
-                    <p>CPF - 038.109.650-57</p>
+                    <p><strong>IZI CAR LOCAÇÕES DE VEÍCULOS</strong></p>
+                    <p>CNPJ - 54.379.584/0001-87</p>
                 </div>
             </div>
         </div>

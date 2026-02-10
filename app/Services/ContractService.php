@@ -21,6 +21,7 @@ class ContractService
             'motorista_numero' => $contract->driver_number,
             'motorista_bairro' => $contract->driver_neighborhood,
             'motorista_cep' => $contract->driver_zip_code,
+            'motorista_cidade' => $contract->driver_city,
             'veiculo' => $contract->vehicle,
             'fabricacao_modelo' => $contract->manufacturing_model,
             'placa' => $contract->license_plate,
@@ -31,6 +32,9 @@ class ContractService
             'valor' => $contract->value_formatted,
             'valor_extenso' => $contract->value_in_words,
             'data_hoje' => $contract->today_date ? Carbon::parse($contract->today_date)->format('d/m/Y') : Carbon::now()->format('d/m/Y'),
+            'data_hoje_extenso' => $contract->today_date ? Carbon::parse($contract->today_date)->translatedFormat('d').' de '.Carbon::parse($contract->today_date)->translatedFormat('F').' de '.Carbon::parse($contract->today_date)->translatedFormat('Y') : Carbon::now()->translatedFormat('d').' de '.Carbon::now()->translatedFormat('F').' de '.Carbon::now()->translatedFormat('Y'),
+            'caucao' => $contract->deposit_formatted,
+            'caucao_extenso' => $contract->deposit_in_words,
         ];
 
         Carbon::setLocale('pt_BR');

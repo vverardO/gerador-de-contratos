@@ -150,8 +150,8 @@ new class extends Component
             'vehicle_owner_id' => $vehicleOwnerId,
             'manufacturing_model' => $this->manufacturingModel,
             'license_plate' => $this->licensePlate,
-            'chassis' => $this->chassis,
-            'renavam' => $this->renavam,
+            'chassis' => strtoupper($this->chassis),
+            'renavam' => strtoupper($this->renavam),
         ]);
 
         session()->flash('toast', [
@@ -321,13 +321,12 @@ new class extends Component
                             @enderror
                         </div>
 
-                        <div x-data="{ handleInput(event) { const v = event.target.value.replace(/\D/g, ''); event.target.value = v; $wire.set('chassis', v); } }" x-init="() => { const input = $el.querySelector('#chassis'); if (input && $wire.chassis) { const v = ($wire.chassis || '').replace(/\D/g, ''); input.value = v; $wire.set('chassis', v); } $watch('$wire.chassis', value => { if (value !== undefined && input && input !== document.activeElement) { input.value = (value || '').replace(/\D/g, ''); } }); }">
+                        <div>
                             <label for="chassis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chassi</label>
                             <input
                                 type="text"
                                 id="chassis"
-                                inputmode="numeric"
-                                x-on:input="handleInput($event)"
+                                wire:model="chassis"
                                 class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                 placeholder="Chassi do veículo"
                             >
