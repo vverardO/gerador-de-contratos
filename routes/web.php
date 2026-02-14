@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/veiculos/criar', 'pages::auth.vehicles.create')->name('vehicles.create');
     Route::livewire('/veiculos/{id}/editar', 'pages::auth.vehicles.edit')->name('vehicles.edit');
 
+    Route::livewire('/templates-contrato', 'pages::auth.contract-templates.index')->name('contractTemplates.index');
+    Route::livewire('/templates-contrato/criar', 'pages::auth.contract-templates.create')->name('contractTemplates.create');
+    Route::livewire('/templates-contrato/{id}/editar', 'pages::auth.contract-templates.edit')->name('contractTemplates.edit');
+
     Route::livewire('/contratos', 'pages::auth.contracts.index')->name('contracts.index');
     Route::livewire('/contratos/criar', 'pages::auth.contracts.create')->name('contracts.create');
     Route::livewire('/contratos/{id}/editar', 'pages::auth.contracts.edit')->name('contracts.edit');

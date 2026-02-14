@@ -42,6 +42,15 @@ new class extends Component
             <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">Bem-vindo ao seu painel, {{ auth()->user()->name }}!</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <a href="{{ route('contractTemplates.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Templates de Contrato</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar templates de contrato</p>
+                    </div>
+                    <i class="fas fa-file-alt text-blue-600 dark:text-blue-400 text-3xl"></i>
+                </div>
+            </a>
             <a href="{{ route('contracts.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
                 <div class="flex items-center justify-between">
                     <div>

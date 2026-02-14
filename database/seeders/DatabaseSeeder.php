@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             DriverAddressSeeder::class,
             VehicleOwnerSeeder::class,
             VehicleSeeder::class,
+            ContractTemplateSeeder::class,
             ContractSeeder::class,
         ]);
     }
