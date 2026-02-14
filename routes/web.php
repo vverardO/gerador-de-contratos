@@ -3,10 +3,6 @@
 use App\Http\Controllers\ContractController;
 use Illuminate\Support\Facades\Route;
 
-/**
- * remover quando tiver algo pra largar no welcome, assim da
- * pra redirecionar para a /dashboard e no logout para o /
- */
 Route::redirect('/', '/acessar');
 
 Route::get('/', function () {
@@ -25,14 +21,6 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/motoristas/criar', 'pages::auth.drivers.create')->name('drivers.create');
     Route::livewire('/motoristas/{id}/editar', 'pages::auth.drivers.edit')->name('drivers.edit');
 
-    Route::livewire('/marcas', 'pages::auth.vehicle-brands.index')->name('vehicleBrands.index');
-    Route::livewire('/marcas/criar', 'pages::auth.vehicle-brands.create')->name('vehicleBrands.create');
-    Route::livewire('/marcas/{id}/editar', 'pages::auth.vehicle-brands.edit')->name('vehicleBrands.edit');
-
-    Route::livewire('/modelos', 'pages::auth.vehicle-models.index')->name('vehicleModels.index');
-    Route::livewire('/modelos/criar', 'pages::auth.vehicle-models.create')->name('vehicleModels.create');
-    Route::livewire('/modelos/{id}/editar', 'pages::auth.vehicle-models.edit')->name('vehicleModels.edit');
-
     Route::livewire('/proprietarios', 'pages::auth.vehicle-owners.index')->name('vehicleOwners.index');
     Route::livewire('/proprietarios/criar', 'pages::auth.vehicle-owners.create')->name('vehicleOwners.create');
     Route::livewire('/proprietarios/{id}/editar', 'pages::auth.vehicle-owners.edit')->name('vehicleOwners.edit');
@@ -47,4 +35,18 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/contratos/{id}/visualizar', [ContractController::class, 'show'])->name('contracts.show');
     Route::get('/contratos/{id}/pdf', [ContractController::class, 'downloadPdf'])->name('contracts.downloadPdf');
+
+    Route::middleware('admin')->group(function () {
+        Route::livewire('/marcas', 'pages::auth.vehicle-brands.index')->name('vehicleBrands.index');
+        Route::livewire('/marcas/criar', 'pages::auth.vehicle-brands.create')->name('vehicleBrands.create');
+        Route::livewire('/marcas/{id}/editar', 'pages::auth.vehicle-brands.edit')->name('vehicleBrands.edit');
+
+        Route::livewire('/modelos', 'pages::auth.vehicle-models.index')->name('vehicleModels.index');
+        Route::livewire('/modelos/criar', 'pages::auth.vehicle-models.create')->name('vehicleModels.create');
+        Route::livewire('/modelos/{id}/editar', 'pages::auth.vehicle-models.edit')->name('vehicleModels.edit');
+
+        Route::livewire('/usuarios', 'pages::auth.users.index')->name('users.index');
+        Route::livewire('/usuarios/criar', 'pages::auth.users.create')->name('users.create');
+        Route::livewire('/usuarios/{id}/editar', 'pages::auth.users.edit')->name('users.edit');
+    });
 });

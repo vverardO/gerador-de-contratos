@@ -78,24 +78,35 @@ new class extends Component
                     <i class="fas fa-user-tie text-blue-600 dark:text-blue-400 text-3xl"></i>
                 </div>
             </a>
-            <a href="{{ route('vehicleBrands.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Marcas de Veículos</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar marcas de veículos</p>
+            @if(auth()->user()->isAdmin())
+                <a href="{{ route('vehicleBrands.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Marcas de Veículos</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar marcas de veículos</p>
+                        </div>
+                        <i class="fas fa-tags text-blue-600 dark:text-blue-400 text-3xl"></i>
                     </div>
-                    <i class="fas fa-tags text-blue-600 dark:text-blue-400 text-3xl"></i>
-                </div>
-            </a>
-            <a href="{{ route('vehicleModels.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Modelos de Veículos</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar modelos de veículos</p>
+                </a>
+                <a href="{{ route('vehicleModels.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Modelos de Veículos</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar modelos de veículos</p>
+                        </div>
+                        <i class="fas fa-car-side text-blue-600 dark:text-blue-400 text-3xl"></i>
                     </div>
-                    <i class="fas fa-car-side text-blue-600 dark:text-blue-400 text-3xl"></i>
-                </div>
-            </a>
+                </a>
+                <a href="{{ route('users.index') }}" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer" wire:navigate>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Usuários</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Gerenciar usuários e permissões</p>
+                        </div>
+                        <i class="fas fa-user-cog text-blue-600 dark:text-blue-400 text-3xl"></i>
+                    </div>
+                </a>
+            @endif
         </div>
     </main>
 </div>
