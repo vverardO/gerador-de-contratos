@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasColumn('contracts', 'driver_license')) {
+            return;
+        }
+
         Schema::table('contracts', function (Blueprint $table) {
             $table->string('driver_license')->nullable()->after('driver_document');
         });
