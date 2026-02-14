@@ -95,10 +95,5 @@ new #[Layout('layouts.guest')] class extends Component
                 </button>
             </div>
         @endenv
-
-        <p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-            Não tem uma conta?
-            <a href="{{ route('register') }}" class="text-blue-600 dark:text-blue-400 hover:underline" wire:navigate>Registrar</a>
-        </p>
     </div>
 </div>

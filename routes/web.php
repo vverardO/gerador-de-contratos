@@ -15,7 +15,6 @@ Route::get('/', function () {
 
 Route::middleware('guest')->group(function () {
     Route::livewire('/acessar', 'pages::guest.login')->name('login');
-    Route::livewire('/registrar', 'pages::guest.register')->name('register');
 });
 
 Route::middleware('auth')->group(function () {
