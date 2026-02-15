@@ -44,9 +44,6 @@ new class extends Component
 }
 ?>
 
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-<script type="text/javascript" src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
-
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
     <nav class="bg-white dark:bg-gray-800 shadow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,8 +94,7 @@ new class extends Component
 
                     <div>
                         <label for="templateInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
-                        <input id="templateInput" type="hidden" wire:model="template">
-                        <trix-editor input="templateInput" class="trix-content rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-h-[300px]"></trix-editor>
+                        <textarea id="templateInput" wire:model="template" class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-h-[300px]"></textarea>
                         @error('template')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -124,21 +120,3 @@ new class extends Component
         </div>
     </main>
 </div>
-
-<script>
-document.addEventListener('livewire:navigated', () => {
-    if (typeof Trix !== 'undefined') {
-        const input = document.getElementById('templateInput');
-        if (input && input.closest('form')) {
-            const editor = input.nextElementSibling;
-            if (editor && editor.editor) {
-                editor.editor.loadHTML(input.value || '');
-            }
-        }
-    }
-});
-document.addEventListener('trix-change', function(e) {
-    const input = document.getElementById('templateInput');
-    if (input) input.dispatchEvent(new Event('input', { bubbles: true }));
-});
-</script>
