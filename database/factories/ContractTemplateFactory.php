@@ -13,7 +13,7 @@ class ContractTemplateFactory extends Factory
     {
         return [
             'title' => fake()->sentence(3),
-            'template' => '<p>' . fake()->paragraphs(3, true) . '</p>',
+            'template' => '<p>'.fake()->paragraphs(3, true).'</p>',
         ];
     }
 }

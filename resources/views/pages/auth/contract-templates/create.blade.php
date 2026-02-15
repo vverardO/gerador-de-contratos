@@ -93,8 +93,8 @@ new class extends Component
                     </div>
 
                     <div>
-                        <label for="templateInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
-                        <textarea id="templateInput" wire:model="template" class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 min-h-[300px]"></textarea>
+                        <label for="templateEditor" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
+                        <x-tiptap-editor :initialContent="$template" />
                         @error('template')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
