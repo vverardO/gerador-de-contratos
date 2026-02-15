@@ -5,6 +5,7 @@ use App\Enums\ContractType;
 use App\Models\Contract;
 use App\Models\Driver;
 use App\Models\DriverAddress;
+use App\Models\ContractTemplate;
 use App\Models\Vehicle;
 use App\Models\VehicleModel;
 use App\Models\VehicleOwner;
@@ -83,6 +84,8 @@ new class extends Component
     public string $startDate = '';
 
     public string $endDate = '';
+
+    public ?int $contractTemplateId = null;
 
     public function mount()
     {
@@ -344,7 +347,7 @@ new class extends Component
     public function save()
     {
         $rules = [
-            'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
+            'type' => ['required', 'string', 'in:occasional_rental,app_rental,personalizado'],
             'driverName' => ['required', 'string', 'max:255'],
             'driverLicense' => ['nullable', 'string', 'max:255'],
             'driverLicenseExpiration' => ['nullable', 'date'],
@@ -510,6 +513,16 @@ new class extends Component
             $payload['quantity_days'] = (int) $this->quantityDays;
             $payload['start_date'] = $this->startDate;
             $payload['end_date'] = $this->endDate;
+        } else {
+            $payload['quantity_days'] = null;
+            $payload['start_date'] = null;
+            $payload['end_date'] = null;
+        }
+
+        if ($this->type === 'personalizado' && $this->contractTemplateId) {
+            $payload['contract_template_id'] = $this->contractTemplateId;
+        } else {
+            $payload['contract_template_id'] = null;
         }
 
         Contract::create($payload);
@@ -576,6 +589,24 @@ new class extends Component
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
+                    @if($type === 'personalizado')
+                    <div class="mb-4">
+                        <label for="contractTemplateId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
+                        <select
+                            id="contractTemplateId"
+                            wire:model="contractTemplateId"
+                            class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        >
+                            <option value="">Selecione o template</option>
+                            @foreach(\App\Models\ContractTemplate::orderBy('title')->get() as $t)
+                                <option value="{{ $t->id }}">{{ $t->title }}</option>
+                            @endforeach
+                        </select>
+                        @error('contractTemplateId')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    @endif
                 </div>
 
                 @if($type === 'occasional_rental')

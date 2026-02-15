@@ -64,6 +64,38 @@
                     { type: 'separator' },
                     { title: 'Align left', icon: 'fa-align-left', onClick: () => editor.chain().focus().setTextAlign('left').run(), isActive: () => editor.isActive({ textAlign: 'left' }) },
                     { title: 'Align center', icon: 'fa-align-center', onClick: () => editor.chain().focus().setTextAlign('center').run(), isActive: () => editor.isActive({ textAlign: 'center' }) },
+                    { type: 'separator' },
+                    { type: 'variableDropdown' },
+                ];
+
+                const templateVariables = [
+                    { key: 'contract_id', label: 'ID do contrato' },
+                    { key: 'motorista_nome', label: 'Nome do motorista' },
+                    { key: 'motorista_documento', label: 'Documento do motorista (CPF)' },
+                    { key: 'motorista_cnh', label: 'CNH do motorista' },
+                    { key: 'motorista_rua', label: 'Rua do endereço do motorista' },
+                    { key: 'motorista_numero', label: 'Número do endereço do motorista' },
+                    { key: 'motorista_bairro', label: 'Bairro do endereço do motorista' },
+                    { key: 'motorista_cidade', label: 'Cidade do endereço do motorista' },
+                    { key: 'motorista_cep', label: 'CEP do endereço do motorista' },
+                    { key: 'veiculo', label: 'Veículo' },
+                    { key: 'fabricacao_modelo', label: 'Fabricante e modelo do veículo' },
+                    { key: 'placa', label: 'Placa do veículo' },
+                    { key: 'chassi', label: 'Chassi do veículo' },
+                    { key: 'renavam', label: 'Renavam do veículo' },
+                    { key: 'proprietario_nome', label: 'Nome do proprietário do veículo' },
+                    { key: 'proprietario_documento', label: 'Documento do proprietário do veículo' },
+                    { key: 'valor', label: 'Valor da diária' },
+                    { key: 'valor_extenso', label: 'Valor da diária (em palavras)' },
+                    { key: 'valor_total', label: 'Valor total' },
+                    { key: 'valor_total_extenso', label: 'Valor total (em palavras)' },
+                    { key: 'caucao', label: 'Caucão' },
+                    { key: 'caucao_extenso', label: 'Caucão (em palavras)' },
+                    { key: 'data_hoje', label: 'Data de hoje' },
+                    { key: 'data_hoje_extenso', label: 'Data de hoje (em palavras)' },
+                    { key: 'quantidade_dias', label: 'Quantidade de dias' },
+                    { key: 'data_inicio', label: 'Data de início' },
+                    { key: 'data_fim', label: 'Data de fim' },
                 ];
 
                 function updateToolbarState() {
@@ -79,6 +111,47 @@
                         const sep = document.createElement('span');
                         sep.className = 'w-px h-5 bg-gray-300 dark:bg-gray-600 mx-1';
                         toolbar.appendChild(sep);
+                        return;
+                    }
+                    if (b.type === 'variableDropdown') {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'relative';
+                        const trigger = document.createElement('button');
+                        trigger.type = 'button';
+                        trigger.className = btnClass + ' flex items-center gap-1';
+                        trigger.title = 'Inserir variável';
+                        trigger.setAttribute('aria-label', 'Inserir variável');
+                        trigger.innerHTML = '<i class="fa-solid fa-code"></i><span class="text-xs hidden sm:inline">Variáveis</span><i class="fa-solid fa-chevron-down text-xs"></i>';
+                        const menu = document.createElement('div');
+                        menu.className = 'absolute left-0 top-full mt-1 z-50 py-1 w-56 max-h-64 overflow-y-auto rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-lg hidden';
+                        menu.setAttribute('data-variable-menu', '');
+                        templateVariables.forEach((v) => {
+                            const opt = document.createElement('button');
+                            opt.type = 'button';
+                            opt.className = 'w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600';
+                            opt.textContent = v.label;
+                            opt.title = '{' + '{' + ' $' + v.key + ' }' + '}';
+                            opt.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                editor.chain().focus().insertContent('{' + '{' + ' $' + v.key + ' }' + '}').run();
+                                menu.classList.add('hidden');
+                                syncToLivewire();
+                            });
+                            menu.appendChild(opt);
+                        });
+                        trigger.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            editor.chain().focus();
+                            const isOpen = !menu.classList.contains('hidden');
+                            toolbar.querySelectorAll('[data-variable-menu]').forEach((m) => m.classList.add('hidden'));
+                            if (!isOpen) menu.classList.remove('hidden');
+                        });
+                        wrap.appendChild(trigger);
+                        wrap.appendChild(menu);
+                        toolbar.appendChild(wrap);
+                        document.addEventListener('click', (e) => {
+                            if (!wrap.contains(e.target)) menu.classList.add('hidden');
+                        });
                         return;
                     }
                     const btn = document.createElement('button');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ContractStatus;
 use App\Enums\ContractType;
+use App\Models\ContractTemplate;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Contract extends Model
 
     protected $fillable = [
         'type',
+        'contract_template_id',
         'status',
         'driver_name',
         'driver_document',
@@ -42,8 +44,14 @@ class Contract extends Model
         'end_date',
     ];
 
+    public function contractTemplate()
+    {
+        return $this->belongsTo(ContractTemplate::class);
+    }
+
     protected $casts = [
         'type' => ContractType::class,
+        'contract_template_id' => 'integer',
         'status' => ContractStatus::class,
         'value' => 'integer',
         'deposit' => 'integer',

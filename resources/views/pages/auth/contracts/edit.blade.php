@@ -2,6 +2,7 @@
 
 use App\Enums\ContractType;
 use App\Models\Contract;
+use App\Models\ContractTemplate;
 use App\Models\Driver;
 use App\Models\Vehicle;
 use App\Models\VehicleOwner;
@@ -71,6 +72,8 @@ new class extends Component
 
     public string $endDate = '';
 
+    public ?int $contractTemplateId = null;
+
     public function mount($id)
     {
         $this->contract = Contract::findOrFail($id);
@@ -93,10 +96,11 @@ new class extends Component
         $this->ownerDocument = $this->contract->owner_document;
         $this->value = $this->formatCentsToDisplay((int) $this->contract->value);
         $this->deposit = $this->formatCentsToDisplay((int) ($this->contract->deposit ?? 0));
-        $this->todayDate = Carbon::parse($this->contract->today_date)->format('Y-m-d');
+        $this->todayDate = $this->contract->today_date ? Carbon::parse($this->contract->today_date)->format('Y-m-d') : now()->format('Y-m-d');
         $this->quantityDays = $this->contract->quantity_days;
-        $this->startDate = Carbon::parse($this->contract->start_date)->format('Y-m-d');
-        $this->endDate = Carbon::parse($this->contract->end_date)->format('Y-m-d');
+        $this->startDate = $this->contract->start_date ? Carbon::parse($this->contract->start_date)->format('Y-m-d') : '';
+        $this->endDate = $this->contract->end_date ? Carbon::parse($this->contract->end_date)->format('Y-m-d') : '';
+        $this->contractTemplateId = $this->contract->contract_template_id;
     }
 
     public function logout()
@@ -261,7 +265,7 @@ new class extends Component
     public function update()
     {
         $rules = [
-            'type' => ['required', 'string', 'in:occasional_rental,app_rental'],
+            'type' => ['required', 'string', 'in:occasional_rental,app_rental,personalizado'],
             'driverName' => ['required', 'string', 'max:255'],
             'driverLicense' => ['nullable', 'string', 'max:255'],
             'driverLicenseExpiration' => ['nullable', 'date'],
@@ -345,6 +349,12 @@ new class extends Component
             $payload['end_date'] = null;
         }
 
+        if ($this->type === 'personalizado' && $this->contractTemplateId) {
+            $payload['contract_template_id'] = $this->contractTemplateId;
+        } else {
+            $payload['contract_template_id'] = null;
+        }
+
         $this->contract->update($payload);
 
         session()->flash('toast', [
@@ -407,6 +417,24 @@ new class extends Component
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
+                    @if($type === 'personalizado')
+                    <div class="mb-4">
+                        <label for="contractTemplateId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
+                        <select
+                            id="contractTemplateId"
+                            wire:model="contractTemplateId"
+                            class="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        >
+                            <option value="">Selecione o template</option>
+                            @foreach(\App\Models\ContractTemplate::orderBy('title')->get() as $t)
+                                <option value="{{ $t->id }}">{{ $t->title }}</option>
+                            @endforeach
+                        </select>
+                        @error('contractTemplateId')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    @endif
                 </div>
 
                 @if($type === 'occasional_rental')

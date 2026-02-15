@@ -14,6 +14,41 @@ class ContractService
     {
         Carbon::setLocale('pt_BR');
 
+        if ($contract->type === ContractType::PERSONALIZADO && $contract->contract_template_id) {
+            return $this->getCustomTemplateHtml($contract);
+        }
+
+        $templateData = $this->buildTemplateData($contract);
+        $templateName = match ($contract->type) {
+            ContractType::APP_RENTAL => 'app-rental',
+            ContractType::OCCASIONAL_RENTAL => 'occasional-rental',
+            ContractType::PERSONALIZADO => 'app-rental',
+        };
+
+        $templateContent = view('components.templates.'.$templateName, $templateData)->render();
+
+        return $this->wrapHtmlWithStructure($templateContent);
+    }
+
+    private function getCustomTemplateHtml(Contract $contract): string
+    {
+        $template = $contract->contractTemplate;
+        if (! $template) {
+            return $this->wrapHtmlWithStructure('<p>Template não configurado.</p>');
+        }
+
+        $templateData = $this->buildTemplateData($contract);
+        $html = $template->template;
+
+        foreach ($templateData as $key => $value) {
+            $html = str_replace('{{ $'.$key.' }}', (string) $value, $html);
+        }
+
+        return $this->wrapHtmlWithStructure($html);
+    }
+
+    private function buildTemplateData(Contract $contract): array
+    {
         $templateData = [
             'contract_id' => $contract->id,
             'motorista_nome' => $contract->driver_name,
@@ -38,10 +73,10 @@ class ContractService
             'caucao_extenso' => $contract->deposit_in_words,
         ];
 
-        $carbonStartDate = Carbon::parse($contract->start_date);
-        $carbonEndDate = Carbon::parse($contract->end_date);
+        $carbonStartDate = $contract->start_date ? Carbon::parse($contract->start_date) : Carbon::now();
+        $carbonEndDate = $contract->end_date ? Carbon::parse($contract->end_date) : Carbon::now();
         $carbonTodayDate = Carbon::now();
-        $carbonContractTodayDate = Carbon::parse($contract->today_date);
+        $carbonContractTodayDate = $contract->today_date ? Carbon::parse($contract->today_date) : Carbon::now();
 
         if ($contract->today_date) {
             $carbonTodayDate = Carbon::parse($contract->today_date);
@@ -52,7 +87,7 @@ class ContractService
         $todayDateString = $carbonTodayDate->translatedFormat('d').' de '.$carbonTodayDate->translatedFormat('F').' de '.$carbonTodayDate->translatedFormat('Y');
         $contractTodayDateString = $carbonContractTodayDate->translatedFormat('d').' de '.$carbonContractTodayDate->translatedFormat('F').' de '.$carbonContractTodayDate->translatedFormat('Y');
 
-        if ($contract->type === ContractType::OCCASIONAL_RENTAL) {
+        if ($contract->type === ContractType::OCCASIONAL_RENTAL || $contract->start_date) {
             $templateData['valor_total'] = $contract->value_formatted;
             $templateData['valor_total_extenso'] = $contract->value_in_words;
             $templateData['quantidade_dias'] = $contract->quantity_days ?? 30;
@@ -62,13 +97,11 @@ class ContractService
 
         $templateData['data_hoje_extenso'] = $contractTodayDateString;
 
-        $templateName = match ($contract->type) {
-            ContractType::APP_RENTAL => 'app-rental',
-            ContractType::OCCASIONAL_RENTAL => 'occasional-rental',
-        };
+        return $templateData;
+    }
 
-        $templateContent = view('components.templates.'.$templateName, $templateData)->render();
-
+    private function wrapHtmlWithStructure(string $templateContent): string
+    {
         $dom = new DOMDocument;
         @$dom->loadHTML('<?xml encoding="UTF-8">'.$templateContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $xpath = new DOMXPath($dom);
